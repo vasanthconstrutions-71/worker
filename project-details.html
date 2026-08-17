@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Details - Vasant Constructions</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- jsPDF & jsPDF-AutoTable CDNs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col justify-between font-sans antialiased text-slate-800">
+
+  <!-- TOP HEADER WITH BACK BUTTON -->
+  <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="project.html" class="bg-amber-500 hover:bg-amber-400 text-slate-900 px-3 py-2 rounded-lg font-bold transition flex items-center gap-2 text-sm">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Back to Projects</span>
+        </a>
+      </div>
+      <div>
+        <h1 class="text-lg sm:text-xl font-extrabold tracking-wide uppercase text-amber-500 text-right">
+          Vasant Constructions
+        </h1>
+        <p class="text-xs text-slate-400 text-right font-medium">Worker Workspace</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full">
+
+    <!-- LOADING SPINNER -->
+    <div id="loadingSpinner" class="text-center py-20">
+      <i class="fa-solid fa-circle-notch fa-spin text-4xl text-amber-500"></i>
+      <p class="text-slate-500 text-sm mt-3 font-medium">Loading project workspace...</p>
+    </div>
+
+    <!-- MAIN PROJECT WORKSPACE (Hidden while loading) -->
+    <div id="projectWorkspace" class="hidden space-y-6">
+
+      <!-- PROJECT SUMMARY BANNER -->
+      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <div class="flex items-center gap-3">
+            <span id="statusBadge" class="px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full uppercase tracking-wider">Active Project</span>
+            <span id="createdDate" class="text-xs text-slate-400"></span>
+          </div>
+          <h2 id="dispProjectName" class="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">--</h2>
+          <p class="text-sm font-semibold text-slate-500 mt-1">
+            <i class="fa-solid fa-building text-amber-500 mr-1"></i> Client: <span id="dispCompanyName" class="text-slate-800">--</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- TAB NAVIGATION -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="flex border-b border-slate-200 bg-slate-50 overflow-x-auto">
+          <button id="tabStockBtn" onclick="switchTab('stock')" class="px-6 py-4 font-bold text-sm text-amber-600 border-b-2 border-amber-500 whitespace-nowrap flex items-center gap-2">
+            <i class="fa-solid fa-boxes-stacked"></i> Material Stock Summary
+          </button>
+          <button id="tabPurchaseBtn" onclick="switchTab('purchase')" class="px-6 py-4 font-bold text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+            <i class="fa-solid fa-cart-flatbed"></i> Inward Purchases
+          </button>
+          <button id="tabUsageBtn" onclick="switchTab('usage')" class="px-6 py-4 font-bold text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
+            <i class="fa-solid fa-truck-ramp-box"></i> Daily Material Usage
+          </button>
+        </div>
+
+        <!-- TAB 1: MATERIAL STOCK SUMMARY -->
+        <div id="tabStock" class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-slate-900">Live Inventory Balance</h3>
+            <button onclick="downloadPDF('stock')" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
+              <i class="fa-solid fa-file-pdf"></i> Download PDF
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase">
+                  <th class="py-3 px-4">Material Name</th>
+                  <th class="py-3 px-4 text-right">Total Purchased</th>
+                  <th class="py-3 px-4 text-right">Total Consumed</th>
+                  <th class="py-3 px-4 text-right">Remaining Balance</th>
+                  <th class="py-3 px-4 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody id="stockTableBody" class="divide-y divide-slate-100 text-sm font-medium">
+                <tr>
+                  <td colspan="5" class="py-6 text-center text-slate-400">No material records found for this project yet.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 2: PURCHASES LOG -->
+        <div id="tabPurchase" class="p-6 hidden">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-slate-900">Inward Purchase History</h3>
+            <div class="flex items-center gap-2">
+              <button onclick="downloadPDF('purchase')" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
+                <i class="fa-solid fa-file-pdf"></i> Download PDF
+              </button>
+              <button onclick="openModal('purchaseModal')" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> Record Material Purchase
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase">
+                  <th class="py-3 px-4">Date</th>
+                  <th class="py-3 px-4">Company Name</th>
+                  <th class="py-3 px-4">Material Name</th>
+                  <th class="py-3 px-4 text-right">Quantity Purchased</th>
+                </tr>
+              </thead>
+              <tbody id="purchaseTableBody" class="divide-y divide-slate-100 text-sm font-medium">
+                <tr><td colspan="4" class="py-6 text-center text-slate-400">No purchase entries recorded.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 3: DAILY USAGE LOG -->
+        <div id="tabUsage" class="p-6 hidden">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold text-slate-900">Site Consumption Log</h3>
+            <div class="flex items-center gap-2">
+              <button onclick="downloadPDF('usage')" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
+                <i class="fa-solid fa-file-pdf"></i> Download PDF
+              </button>
+              <button onclick="openModal('usageModal')" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
+                <i class="fa-solid fa-plus"></i> Record Daily Usage
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+              <thead>
+                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase">
+                  <th class="py-3 px-4">Date</th>
+                  <th class="py-3 px-4">Material</th>
+                  <th class="py-3 px-4 text-right">Quantity Used</th>
+                  <th class="py-3 px-4">Work Remark</th>
+                </tr>
+              </thead>
+              <tbody id="usageTableBody" class="divide-y divide-slate-100 text-sm font-medium">
+                <tr><td colspan="4" class="py-6 text-center text-slate-400">No material usage recorded yet.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- MODAL 1: ADD PURCHASE -->
+  <div id="purchaseModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-200">
+      <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+        <h3 class="text-base font-bold"><i class="fa-solid fa-cart-plus text-amber-500 mr-2"></i>Record Material Purchase</h3>
+        <button onclick="closeModal('purchaseModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="purchaseForm" class="p-6 space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Company / Supplier Name *</label>
+          <input type="text" id="purVendor" required placeholder="e.g. Laxmi Traders / UltraTech" class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-amber-500">
+        </div>
+
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-xs font-bold uppercase text-slate-600">Purchased Items List *</label>
+            <button type="button" onclick="addPurchaseRow()" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+              <i class="fa-solid fa-plus-circle"></i> Add Item Row
+            </button>
+          </div>
+
+          <div class="border border-slate-200 rounded-xl overflow-hidden max-h-60 overflow-y-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 font-bold text-slate-600 border-b border-slate-200">
+                <tr>
+                  <th class="p-2.5">Material Name</th>
+                  <th class="p-2.5 w-32">Qty Purchased</th>
+                  <th class="p-2.5 w-10 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="purchaseItemsTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-3">
+          <button type="button" onclick="closeModal('purchaseModal')" class="px-4 py-2 rounded-xl border text-slate-600 text-xs font-semibold hover:bg-slate-50">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow">Save All Purchase Entries</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL 2: ADD USAGE -->
+  <div id="usageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-2xl w-full overflow-hidden border border-slate-200">
+      <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
+        <h3 class="text-base font-bold"><i class="fa-solid fa-truck-ramp-box text-amber-500 mr-2"></i>Record Daily Material Usage</h3>
+        <button onclick="closeModal('usageModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+      </div>
+      <form id="usageForm" class="p-6 space-y-4">
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <label class="block text-xs font-bold uppercase text-slate-600">Material Consumption List *</label>
+            <button type="button" onclick="addUsageRow()" class="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center gap-1">
+              <i class="fa-solid fa-plus-circle"></i> Add Item Row
+            </button>
+          </div>
+
+          <datalist id="availableMaterialsList"></datalist>
+
+          <div class="border border-slate-200 rounded-xl overflow-hidden max-h-60 overflow-y-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-100 font-bold text-slate-600 border-b border-slate-200">
+                <tr>
+                  <th class="p-2.5">Material Name (Select/Type)</th>
+                  <th class="p-2.5 w-32">Qty Used</th>
+                  <th class="p-2.5">Work Remark</th>
+                  <th class="p-2.5 w-10 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody id="usageItemsTableBody" class="divide-y divide-slate-100"></tbody>
+            </table>
+          </div>
+          <p class="text-[11px] text-slate-400 mt-1.5"><i class="fa-solid fa-circle-info mr-1"></i>Materials must exist in Inward Purchases. <span class="text-emerald-600 font-bold">Green = Valid</span>, <span class="text-red-500 font-bold">Red = Invalid</span>.</p>
+        </div>
+
+        <div class="pt-2 flex justify-end gap-3">
+          <button type="button" onclick="closeModal('usageModal')" class="px-4 py-2 rounded-xl border text-slate-600 text-xs font-semibold hover:bg-slate-50">Cancel</button>
+          <button type="submit" id="saveUsageBtn" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow">Save All Usage Entries</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-slate-900 text-slate-400 py-4 text-center text-xs border-t border-slate-800">
+    <p>© Vasant Constructions. All Rights Reserved.</p>
+  </footer>
+
+  <!-- FIREBASE LOGIC -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC0xLiByPlm4EGEHdxg77ylFswxgKQRnIo",
+      authDomain: "vasanthconstrutions-19c6f.firebaseapp.com",
+      databaseURL: "https://vasanthconstrutions-19c6f-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "vasanthconstrutions-19c6f",
+      storageBucket: "vasanthconstrutions-19c6f.firebasestorage.app",
+      messagingSenderId: "677215073901",
+      appId: "1:677215073901:web:d18cc1cc3ade5f34fd7164"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let purchasedMaterialsList = [];
+    let currentProjectData = {};
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const projectKey = urlParams.get('id');
+
+    if (!projectKey) {
+      alert("No project selected! Redirecting back to projects list.");
+      window.location.href = "project.html";
+    }
+
+    // Dynamic Row Helpers
+    window.addPurchaseRow = () => {
+      const tbody = document.getElementById('purchaseItemsTableBody');
+      const rowId = 'pur_row_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+
+      const tr = document.createElement('tr');
+      tr.id = rowId;
+      tr.className = 'item-row hover:bg-slate-50';
+      tr.innerHTML = `
+        <td class="p-2">
+          <input type="text" required placeholder="e.g. Cement Bags" class="row-material w-full px-2 py-1.5 border rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+        </td>
+        <td class="p-2">
+          <input type="number" step="any" required placeholder="e.g. 50" class="row-qty w-full px-2 py-1.5 border rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+        </td>
+        <td class="p-2 text-center">
+          <button type="button" onclick="removePurchaseRow('${rowId}')" class="text-red-500 hover:text-red-700 font-bold text-sm">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    };
+
+    window.removePurchaseRow = (rowId) => {
+      const tbody = document.getElementById('purchaseItemsTableBody');
+      if (tbody.children.length > 1) {
+        document.getElementById(rowId).remove();
+      } else {
+        alert("At least one material item is required.");
+      }
+    };
+
+    window.addUsageRow = () => {
+      const tbody = document.getElementById('usageItemsTableBody');
+      const rowId = 'use_row_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+
+      const tr = document.createElement('tr');
+      tr.id = rowId;
+      tr.className = 'usage-item-row hover:bg-slate-50';
+      tr.innerHTML = `
+        <td class="p-2">
+          <input type="text" list="availableMaterialsList" required placeholder="Select or type material..." class="use-row-material w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs font-medium focus:outline-none transition" oninput="validateMaterialInput(this)">
+        </td>
+        <td class="p-2">
+          <input type="number" step="any" required placeholder="e.g. 15" class="use-row-qty w-full px-2 py-1.5 border rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+        </td>
+        <td class="p-2">
+          <input type="text" placeholder="e.g. Foundation Casting" class="use-row-remark w-full px-2 py-1.5 border rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+        </td>
+        <td class="p-2 text-center">
+          <button type="button" onclick="removeUsageRow('${rowId}')" class="text-red-500 hover:text-red-700 font-bold text-sm">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    };
+
+    window.removeUsageRow = (rowId) => {
+      const tbody = document.getElementById('usageItemsTableBody');
+      if (tbody.children.length > 1) {
+        document.getElementById(rowId).remove();
+      } else {
+        alert("At least one usage entry is required.");
+      }
+    };
+
+    window.validateMaterialInput = (input) => {
+      const val = input.value.trim().toLowerCase();
+      if (!val) {
+        input.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-red-500', 'bg-red-50');
+        input.classList.add('border-slate-300');
+        return false;
+      }
+
+      const exists = purchasedMaterialsList.some(m => m.toLowerCase() === val);
+      if (exists) {
+        input.classList.remove('border-slate-300', 'border-red-500', 'bg-red-50');
+        input.classList.add('border-emerald-500', 'bg-emerald-50');
+        return true;
+      } else {
+        input.classList.remove('border-slate-300', 'border-emerald-500', 'bg-emerald-50');
+        input.classList.add('border-red-500', 'bg-red-50');
+        return false;
+      }
+    };
+
+    window.openModal = (id) => {
+      document.getElementById(id).classList.remove('hidden');
+      if (id === 'purchaseModal') {
+        document.getElementById('purchaseItemsTableBody').innerHTML = '';
+        addPurchaseRow();
+      }
+      if (id === 'usageModal') {
+        document.getElementById('usageItemsTableBody').innerHTML = '';
+        const dataList = document.getElementById('availableMaterialsList');
+        dataList.innerHTML = '';
+        purchasedMaterialsList.forEach(mat => {
+          const opt = document.createElement('option');
+          opt.value = mat;
+          dataList.appendChild(opt);
+        });
+        addUsageRow();
+      }
+    };
+
+    window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
+
+    window.switchTab = (tabName) => {
+      ['stock', 'purchase', 'usage'].forEach(t => {
+        document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
+        const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
+        btn.classList.remove('text-amber-600', 'border-amber-500');
+        btn.classList.add('text-slate-500', 'border-transparent');
+      });
+
+      document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1)).classList.remove('hidden');
+      const activeBtn = document.getElementById('tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + 'Btn');
+      activeBtn.classList.add('text-amber-600', 'border-amber-500');
+      activeBtn.classList.remove('text-slate-500', 'border-transparent');
+    };
+
+    // Load Project Data
+    const projectRef = ref(db, 'projects/' + projectKey);
+    onValue(projectRef, (snapshot) => {
+      document.getElementById('loadingSpinner').classList.add('hidden');
+      document.getElementById('projectWorkspace').classList.remove('hidden');
+
+      if (snapshot.exists()) {
+        const data = snapshot.val();
+        currentProjectData = data;
+
+        document.getElementById('dispProjectName').textContent = data.projectName || projectKey;
+        document.getElementById('dispCompanyName').textContent = data.companyName || 'N/A';
+        document.getElementById('createdDate').textContent = data.createdAt ? 'Created on: ' + new Date(data.createdAt).toLocaleDateString() : '';
+
+        const currentStatus = data.status || 'Active';
+        const badge = document.getElementById('statusBadge');
+        badge.textContent = `${currentStatus} Project`;
+
+        if (currentStatus === 'Completed') {
+          badge.className = "px-3 py-1 bg-emerald-100 text-emerald-800 font-bold text-xs rounded-full uppercase tracking-wider";
+        } else {
+          badge.className = "px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full uppercase tracking-wider";
+        }
+
+        const purchases = data.purchases ? Object.values(data.purchases) : [];
+        const usages = data.usage ? Object.values(data.usage) : [];
+
+        const uniqueMatSet = new Set();
+        purchases.forEach(p => {
+          if (p.materialName) uniqueMatSet.add(p.materialName.trim());
+        });
+        purchasedMaterialsList = Array.from(uniqueMatSet);
+
+        renderStockTable(purchases, usages);
+        renderPurchasesTable(purchases);
+        renderUsageTable(usages);
+      } else {
+        alert("Project not found in database.");
+        window.location.href = "project.html";
+      }
+    });
+
+    function renderStockTable(purchases, usages) {
+      const stockMap = {};
+
+      purchases.forEach(p => {
+        const key = p.materialName.toLowerCase().trim();
+        if (!stockMap[key]) stockMap[key] = { name: p.materialName, purchased: 0, used: 0 };
+        stockMap[key].purchased += parseFloat(p.quantity || 0);
+      });
+
+      usages.forEach(u => {
+        const key = u.materialName.toLowerCase().trim();
+        if (!stockMap[key]) stockMap[key] = { name: u.materialName, purchased: 0, used: 0 };
+        stockMap[key].used += parseFloat(u.quantity || 0);
+      });
+
+      const tbody = document.getElementById('stockTableBody');
+      tbody.innerHTML = '';
+
+      const keys = Object.keys(stockMap);
+      if (keys.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="py-6 text-center text-slate-400">No material records found for this project.</td></tr>';
+        return;
+      }
+
+      keys.forEach(k => {
+        const item = stockMap[k];
+        const remaining = item.purchased - item.used;
+        const isLow = remaining <= 10;
+
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr class="hover:bg-slate-50">
+            <td class="py-3 px-4 font-bold text-slate-900">${item.name}</td>
+            <td class="py-3 px-4 text-right text-slate-700">${item.purchased}</td>
+            <td class="py-3 px-4 text-right text-slate-700">${item.used}</td>
+            <td class="py-3 px-4 text-right font-extrabold text-slate-900">${remaining}</td>
+            <td class="py-3 px-4 text-center">
+              ${isLow 
+                ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-800 text-xs font-bold rounded-full">Low Stock</span>' 
+                : '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-full">Available</span>'}
+            </td>
+          </tr>
+        `);
+      });
+    }
+
+    function renderPurchasesTable(purchases) {
+      const tbody = document.getElementById('purchaseTableBody');
+      tbody.innerHTML = purchases.length === 0 ? '<tr><td colspan="4" class="py-6 text-center text-slate-400">No purchase entries recorded.</td></tr>' : '';
+      purchases.reverse().forEach(p => {
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr class="hover:bg-slate-50">
+            <td class="py-3 px-4 text-xs text-slate-500">${new Date(p.date).toLocaleDateString()}</td>
+            <td class="py-3 px-4 text-slate-800 font-medium">${p.vendor || '-'}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${p.materialName}</td>
+            <td class="py-3 px-4 text-right font-semibold text-slate-800">${p.quantity}</td>
+          </tr>
+        `);
+      });
+    }
+
+    function renderUsageTable(usages) {
+      const tbody = document.getElementById('usageTableBody');
+      tbody.innerHTML = usages.length === 0 ? '<tr><td colspan="4" class="py-6 text-center text-slate-400">No material usage recorded yet.</td></tr>' : '';
+      usages.reverse().forEach(u => {
+        tbody.insertAdjacentHTML('beforeend', `
+          <tr class="hover:bg-slate-50">
+            <td class="py-3 px-4 text-xs text-slate-500">${new Date(u.date).toLocaleDateString()}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">${u.materialName}</td>
+            <td class="py-3 px-4 text-right font-semibold">${u.quantity}</td>
+            <td class="py-3 px-4 text-slate-600">${u.remark || '-'}</td>
+          </tr>
+        `);
+      });
+    }
+
+    // MULTI-ROW PURCHASE FORM SUBMISSION
+    document.getElementById('purchaseForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const vendor = document.getElementById('purVendor').value;
+      const rows = document.querySelectorAll('#purchaseItemsTableBody .item-row');
+      const now = new Date().toISOString();
+
+      const promises = Array.from(rows).map(row => {
+        const materialName = row.querySelector('.row-material').value;
+        const quantity = row.querySelector('.row-qty').value;
+
+        return push(ref(db, `projects/${projectKey}/purchases`), {
+          vendor: vendor,
+          materialName: materialName,
+          quantity: quantity,
+          date: now
+        });
+      });
+
+      await Promise.all(promises);
+      closeModal('purchaseModal');
+      e.target.reset();
+    });
+
+    // MULTI-ROW DAILY USAGE FORM SUBMISSION
+    document.getElementById('usageForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const rows = document.querySelectorAll('#usageItemsTableBody .usage-item-row');
+      const now = new Date().toISOString();
+
+      let hasInvalidMaterial = false;
+      const usageEntries = [];
+
+      rows.forEach(row => {
+        const matInput = row.querySelector('.use-row-material');
+        const qtyInput = row.querySelector('.use-row-qty');
+        const remarkInput = row.querySelector('.use-row-remark');
+
+        const matVal = matInput.value.trim();
+        const isValid = validateMaterialInput(matInput);
+
+        if (!isValid) {
+          hasInvalidMaterial = true;
+        } else {
+          const matchedName = purchasedMaterialsList.find(m => m.toLowerCase() === matVal.toLowerCase()) || matVal;
+          usageEntries.push({
+            materialName: matchedName,
+            quantity: qtyInput.value,
+            remark: remarkInput.value,
+            date: now
+          });
+        }
+      });
+
+      if (hasInvalidMaterial) {
+        alert("Cannot save! One or more entered materials do not exist in Inward Purchases. Please select valid materials highlighted in green.");
+        return;
+      }
+
+      const promises = usageEntries.map(entry => push(ref(db, `projects/${projectKey}/usage`), entry));
+      await Promise.all(promises);
+
+      closeModal('usageModal');
+      e.target.reset();
+    });
+
+    // GENERAL PDF EXPORT FUNCTION
+    window.downloadPDF = (type) => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      const projName = currentProjectData.projectName || 'Project';
+      const compName = currentProjectData.companyName || 'N/A';
+
+      // Header Section
+      doc.setFontSize(16);
+      doc.setFont('helvetica', 'bold');
+      doc.text("VASANT CONSTRUCTIONS", 14, 15);
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Project Name: ${projName}`, 14, 23);
+      doc.text(`Client: ${compName}`, 14, 29);
+      doc.text(`Generated Date: ${new Date().toLocaleDateString('en-IN')}`, 14, 35);
+
+      const cleanText = (str) => {
+        if (!str) return '';
+        return str.trim();
+      };
+
+      let title = "";
+      let headers = [];
+      let bodyData = [];
+
+      if (type === 'stock') {
+        title = "Live Inventory Balance";
+        headers = [["Material Name", "Total Purchased", "Total Consumed", "Remaining Balance", "Status"]];
+        const rows = document.querySelectorAll('#stockTableBody tr');
+        rows.forEach(tr => {
+          const tds = tr.querySelectorAll('td');
+          if (tds.length === 5) {
+            bodyData.push([
+              cleanText(tds[0].innerText),
+              cleanText(tds[1].innerText),
+              cleanText(tds[2].innerText),
+              cleanText(tds[3].innerText),
+              cleanText(tds[4].innerText)
+            ]);
+          }
+        });
+      } else if (type === 'purchase') {
+        title = "Inward Purchase History";
+        headers = [["Date", "Company Name", "Material Name", "Quantity Purchased"]];
+        const rows = document.querySelectorAll('#purchaseTableBody tr');
+        rows.forEach(tr => {
+          const tds = tr.querySelectorAll('td');
+          if (tds.length === 4) {
+            bodyData.push([
+              cleanText(tds[0].innerText),
+              cleanText(tds[1].innerText),
+              cleanText(tds[2].innerText),
+              cleanText(tds[3].innerText)
+            ]);
+          }
+        });
+      } else if (type === 'usage') {
+        title = "Site Consumption Log";
+        headers = [["Date", "Material", "Quantity Used", "Work Remark"]];
+        const rows = document.querySelectorAll('#usageTableBody tr');
+        rows.forEach(tr => {
+          const tds = tr.querySelectorAll('td');
+          if (tds.length === 4) {
+            bodyData.push([
+              cleanText(tds[0].innerText),
+              cleanText(tds[1].innerText),
+              cleanText(tds[2].innerText),
+              cleanText(tds[3].innerText)
+            ]);
+          }
+        });
+      }
+
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text(title, 14, 45);
+
+      doc.autoTable({
+        startY: 50,
+        head: headers,
+        body: bodyData,
+        theme: 'striped',
+        headStyles: { fillColor: [15, 23, 42] },
+        styles: { fontSize: 9 }
+      });
+
+      const cleanProjName = projName.replace(/[^a-zA-Z0-9]/g, '_');
+      doc.save(`${cleanProjName}_${type}_report.pdf`);
+    };
+
+  </script>
+</body>
+</html>
