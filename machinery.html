@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Machinery & Fleet Tracker - Vasant Constructions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col justify-between font-sans antialiased text-slate-800">
+
+  <header class="bg-slate-900 text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="bg-amber-500 p-2.5 rounded-lg text-slate-900 font-bold hover:bg-amber-400 transition-colors">
+          <i class="fa-solid fa-helmet-safety text-2xl"></i>
+        </a>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-extrabold tracking-wide uppercase text-amber-500">
+            Vasant Constructions
+          </h1>
+          <p class="text-xs text-slate-400 font-medium">Equipment & Machinery Fleet</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <a href="index.html" class="hidden sm:inline-flex items-center gap-2 px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-semibold transition">
+          <i class="fa-solid fa-arrow-left"></i> Home
+        </a>
+        <button onclick="openAddMachineModal()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs sm:text-sm font-bold px-3 sm:px-4 py-2 rounded-lg transition-all shadow flex items-center gap-2">
+          <i class="fa-solid fa-plus-circle"></i> Add Equipment
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full space-y-8">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-truck-monster"></i>
+        </div>
+        <div>
+          <p class="text-xs text-slate-500 font-semibold uppercase">Total Equipment</p>
+          <h3 id="statTotalFleet" class="text-2xl font-bold text-slate-900">0</h3>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-circle-play"></i>
+        </div>
+        <div>
+          <p class="text-xs text-slate-500 font-semibold uppercase">Active On Site</p>
+          <h3 id="statActiveCount" class="text-2xl font-bold text-slate-900">0</h3>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-gas-pump"></i>
+        </div>
+        <div>
+          <p class="text-xs text-slate-500 font-semibold uppercase">Diesel Spent (Month)</p>
+          <h3 id="statFuelExpense" class="text-2xl font-bold text-slate-900">₹0</h3>
+        </div>
+      </div>
+
+      <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
+        <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-file-invoice-dollar"></i>
+        </div>
+        <div>
+          <p class="text-xs text-slate-500 font-semibold uppercase">Monthly Rental Bills</p>
+          <h3 id="statRentalExpense" class="text-2xl font-bold text-slate-900">₹0</h3>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-screwdriver-wrench text-amber-500"></i> Construction Machinery & Equipment
+        </h2>
+        <div class="flex items-center gap-2">
+          <button onclick="openFuelModal()" class="text-xs font-semibold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+            <i class="fa-solid fa-gas-pump"></i> Log Fuel & Diesel
+          </button>
+        </div>
+      </div>
+
+      <div id="fleetGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+      <h2 class="text-lg font-bold text-slate-800 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-oil-can text-orange-500"></i> Recent Fuel Fill & Servicing Logs
+      </h2>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-sm text-slate-600">
+          <thead class="bg-slate-50 text-slate-700 uppercase text-xs font-semibold border-b border-slate-200">
+            <tr>
+              <th class="py-3 px-4">Date</th>
+              <th class="py-3 px-4">Equipment</th>
+              <th class="py-3 px-4">Log Type</th>
+              <th class="py-3 px-4">Quantity / Hours</th>
+              <th class="py-3 px-4">Total Amount (₹)</th>
+              <th class="py-3 px-4">Site Location / Driver</th>
+            </tr>
+          </thead>
+          <tbody id="logsTableBody" class="divide-y divide-slate-100">
+            </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <div id="addMachineModal" class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative">
+      <button onclick="closeModal('addMachineModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <i class="fa-solid fa-truck-monster text-amber-500"></i> Register New Equipment
+      </h3>
+      <form id="addMachineForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Equipment Name / Code</label>
+          <input type="text" id="eqName" required placeholder="e.g. JCB 3DX Excavator (KA-04-E-9012)" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-500 outline-none">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Ownership Type</label>
+            <select id="eqOwnership" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white">
+              <option value="OWNED">Company Owned</option>
+              <option value="RENTED">Hired / Rented</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Status</label>
+            <select id="eqStatus" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white">
+              <option value="ACTIVE">Active on Site</option>
+              <option value="IDLE">Idle in Yard</option>
+              <option value="MAINTENANCE">In Service</option>
+            </select>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Assigned Project/Site</label>
+            <input type="text" id="eqSite" placeholder="e.g. Site B - Villa 4" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Daily Rental Cost (₹)</label>
+            <input type="number" id="eqRentalCost" placeholder="0 if owned" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Operator / Driver Contact</label>
+          <input type="text" id="eqOperator" placeholder="Driver Name & Phone" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-amber-500 text-slate-900 font-bold rounded-lg hover:bg-amber-400 transition">Save Equipment</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="fuelModal" class="fixed inset-0 bg-slate-900/60 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative">
+      <button onclick="closeModal('fuelModal')" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+      <h3 class="text-lg font-bold text-slate-900 mb-4 text-emerald-600 flex items-center gap-2">
+        <i class="fa-solid fa-gas-pump"></i> Log Fuel / Maintenance Cost
+      </h3>
+      <form id="fuelForm" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Select Machinery</label>
+          <select id="fuelEqSelect" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white">
+            </select>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Log Type</label>
+            <select id="fuelLogType" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none bg-white">
+              <option value="DIESEL">Diesel Refill</option>
+              <option value="SERVICE">Servicing & Repairs</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Quantity (Litres/Hours)</label>
+            <input type="number" id="fuelQty" placeholder="e.g. 45" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none">
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Total Expense Amount (₹)</label>
+          <input type="number" id="fuelAmount" required placeholder="e.g. 4250" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold uppercase text-slate-500 mb-1">Notes / Receipt Bill No.</label>
+          <input type="text" id="fuelNotes" placeholder="Petrol Bunk Bill #559" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none">
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-emerald-600 text-white font-bold rounded-lg hover:bg-emerald-500 transition">Record Log</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="bg-slate-900 text-slate-400 text-center py-4 text-xs mt-8">
+    &copy; 2026 Vasant Constructions Management System. All rights reserved.
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // --- YOUR FIREBASE CONFIGURATION ---
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let machineryFleet = {};
+    let machineryLogs = [];
+
+    // --- Realtime Listener ---
+    onValue(ref(db, 'machinery'), (snapshot) => {
+      const data = snapshot.val();
+      machineryFleet = data?.fleet || {};
+      
+      machineryLogs = [];
+      if (data?.logs) {
+        Object.keys(data.logs).forEach(key => {
+          machineryLogs.push({ id: key, ...data.logs[key] });
+        });
+      }
+      machineryLogs.sort((a, b) => b.timestamp - a.timestamp);
+
+      renderDashboard();
+    });
+
+    // --- Render Cards & Logs ---
+    function renderDashboard() {
+      const fleetGrid = document.getElementById('fleetGrid');
+      const fuelEqSelect = document.getElementById('fuelEqSelect');
+      const logsBody = document.getElementById('logsTableBody');
+
+      fleetGrid.innerHTML = '';
+      fuelEqSelect.innerHTML = '';
+      logsBody.innerHTML = '';
+
+      let totalFleet = 0;
+      let activeCount = 0;
+      let totalFuelSpent = 0;
+      let totalRentalSpent = 0;
+
+      const keys = Object.keys(machineryFleet);
+
+      if (keys.length === 0) {
+        fleetGrid.innerHTML = `<p class="col-span-full text-center text-slate-400 py-8">No equipment registered. Click "Add Equipment" to manage your fleet.</p>`;
+      } else {
+        keys.forEach(key => {
+          const eq = machineryFleet[key];
+          totalFleet++;
+
+          if (eq.status === 'ACTIVE') activeCount++;
+          if (eq.ownership === 'RENTED') totalRentalSpent += Number(eq.rentalCost || 0);
+
+          // Card UI Status Badge
+          let statusBadge = '<span class="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">ACTIVE</span>';
+          if (eq.status === 'IDLE') statusBadge = '<span class="bg-slate-100 text-slate-700 text-[10px] font-bold px-2 py-0.5 rounded-full">IDLE</span>';
+          if (eq.status === 'MAINTENANCE') statusBadge = '<span class="bg-red-100 text-red-700 text-[10px] font-bold px-2 py-0.5 rounded-full">SERVICING</span>';
+
+          const cardHtml = `
+            <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between">
+              <div>
+                <div class="flex justify-between items-start mb-2">
+                  <h3 class="font-bold text-slate-900 text-base">${eq.name}</h3>
+                  ${statusBadge}
+                </div>
+                <div class="flex items-center gap-2 mb-4">
+                  <span class="text-xs font-bold uppercase ${eq.ownership === 'RENTED' ? 'text-purple-600 bg-purple-50' : 'text-blue-600 bg-blue-50'} px-2 py-0.5 rounded">
+                    ${eq.ownership}
+                  </span>
+                  <span class="text-xs text-slate-500"><i class="fa-solid fa-location-dot text-slate-400"></i> ${eq.site || 'Yard'}</span>
+                </div>
+              </div>
+
+              <div class="space-y-2 border-t border-slate-100 pt-3 text-xs text-slate-600">
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Operator:</span>
+                  <span class="font-semibold text-slate-700">${eq.operator || 'Unassigned'}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-slate-400">Daily Rental:</span>
+                  <span class="font-bold text-slate-900">${eq.rentalCost > 0 ? '₹' + eq.rentalCost + '/day' : 'Owned Asset'}</span>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-slate-100 flex justify-end gap-2">
+                <button onclick="deleteEquipment('${key}') text-xs text-red-500 hover:text-red-700 font-semibold flex items-center gap-1">
+                  <i class="fa-solid fa-trash"></i> Delete
+                </button>
+              </div>
+            </div>
+          `;
+          fleetGrid.insertAdjacentHTML('beforeend', cardHtml);
+
+          // Add to Select dropdown
+          fuelEqSelect.insertAdjacentHTML('beforeend', `<option value="${key}">${eq.name}</option>`);
+        });
+      }
+
+      // Calculate totals from logs
+      machineryLogs.forEach(log => {
+        if (log.logType === 'DIESEL') totalFuelSpent += Number(log.amount || 0);
+      });
+
+      // Update Top KPIs
+      document.getElementById('statTotalFleet').innerText = totalFleet;
+      document.getElementById('statActiveCount').innerText = activeCount;
+      document.getElementById('statFuelExpense').innerText = `₹${totalFuelSpent.toLocaleString('en-IN')}`;
+      document.getElementById('statRentalExpense').innerText = `₹${totalRentalSpent.toLocaleString('en-IN')}`;
+
+      // Render Table Logs
+      machineryLogs.slice(0, 10).forEach(log => {
+        const row = `
+          <tr>
+            <td class="py-3 px-4 font-mono text-xs">${new Date(log.timestamp).toLocaleDateString()}</td>
+            <td class="py-3 px-4 font-semibold text-slate-800">${log.equipmentName}</td>
+            <td class="py-3 px-4">
+              <span class="px-2 py-1 rounded-full text-[10px] font-bold ${log.logType === 'DIESEL' ? 'bg-orange-100 text-orange-800' : 'bg-red-100 text-red-800'}">
+                ${log.logType}
+              </span>
+            </td>
+            <td class="py-3 px-4">${log.quantity ? log.quantity + ' Ltrs/Hrs' : '-'}</td>
+            <td class="py-3 px-4 font-bold text-slate-900">₹${log.amount}</td>
+            <td class="py-3 px-4 text-xs text-slate-400">${log.notes || '-'}</td>
+          </tr>
+        `;
+        logsBody.insertAdjacentHTML('beforeend', row);
+      });
+    }
+
+    // --- Form Submissions ---
+    
+    // 1. Add Equipment
+    document.getElementById('addMachineForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const eqId = 'eq_' + Date.now();
+      const name = document.getElementById('eqName').value.trim();
+      const ownership = document.getElementById('eqOwnership').value;
+      const status = document.getElementById('eqStatus').value;
+      const site = document.getElementById('eqSite').value.trim();
+      const rentalCost = Number(document.getElementById('eqRentalCost').value || 0);
+      const operator = document.getElementById('eqOperator').value.trim();
+
+      await update(ref(db, `machinery/fleet/${eqId}`), {
+        name, ownership, status, site, rentalCost, operator
+      });
+
+      window.closeModal('addMachineModal');
+      document.getElementById('addMachineForm').reset();
+    });
+
+    // 2. Log Fuel/Service Expense
+    document.getElementById('fuelForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const eqId = document.getElementById('fuelEqSelect').value;
+      const logType = document.getElementById('fuelLogType').value;
+      const quantity = document.getElementById('fuelQty').value;
+      const amount = Number(document.getElementById('fuelAmount').value);
+      const notes = document.getElementById('fuelNotes').value.trim();
+
+      const eq = machineryFleet[eqId];
+
+      await push(ref(db, 'machinery/logs'), {
+        equipmentId: eqId,
+        equipmentName: eq.name,
+        logType,
+        quantity,
+        amount,
+        notes,
+        timestamp: Date.now()
+      });
+
+      window.closeModal('fuelModal');
+      document.getElementById('fuelForm').reset();
+    });
+
+    // Global Modal Functions
+    window.openAddMachineModal = () => document.getElementById('addMachineModal').classList.replace('hidden', 'flex');
+    window.openFuelModal = () => document.getElementById('fuelModal').classList.replace('hidden', 'flex');
+    window.closeModal = (id) => document.getElementById(id).classList.replace('flex', 'hidden');
+
+    window.deleteEquipment = async (key) => {
+      if(confirm('Are you sure you want to remove this machine from the fleet?')) {
+        await remove(ref(db, `machinery/fleet/${key}`));
+      }
+    };
+  </script>
+</body>
+</html>

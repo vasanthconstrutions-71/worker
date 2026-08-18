@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vasant Constructions - Attendance & OT Toggle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logo.png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #f0f3f8; padding: 0; padding-bottom: 60px; color: #333; }
+        
+        .header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            padding: 12px 20px;
+            background: #0d1326;
+            color: white;
+            margin-bottom: 20px;
+        }
+        .header a {
+            text-decoration: none;
+            color: #f5a623;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+        .header a:hover { color: #e0951a; }
+        
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+
+        .table-container { 
+            background: #fff; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
+            border: 1px solid #eef2f5;
+            width: 100%; 
+            overflow: hidden;
+        }
+        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        
+        th { background: #0d1326; color: #fff; padding: 12px 10px; text-align: left; font-size: 13px; font-weight: 600; }
+        td { padding: 12px 10px; border-bottom: 1px solid #eef2f5; vertical-align: middle; color: #222; }
+        
+        th:nth-child(1), td:nth-child(1) { width: 35%; }
+        th:nth-child(2), td:nth-child(2) { width: 35%; text-align: center; }
+        th:nth-child(3), td:nth-child(3) { width: 30%; text-align: center; }
+
+        .btn-status { border: 1px solid #dce2e6; padding: 6px 12px; border-radius: 6px; cursor: pointer; background: white; font-size: 11px; font-weight: 600; transition: 0.2s; }
+        .active-p { background: #28a745 !important; color: white !important; border-color: #28a745 !important; }
+        .active-a { background: #ff4d4f !important; color: white !important; border-color: #ff4d4f !important; }
+
+        .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0; background:#ccc; transition:.4s; border-radius:20px; }
+        .slider:before { position: absolute; content:""; height:14px; width:14px; left:2px; bottom:2px; background:white; transition:.4s; border-radius:50%; }
+        input:checked + .slider { background:#f5a623; }
+        input:checked + .slider:before { transform: translateX(18px); }
+
+        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index: 1000; padding: 20px; }
+        .modal-content { background:#fff; padding:20px; border-radius:12px; width: 100%; max-width: 340px; text-align:center; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
+        .modal-content h4 { color: #0d1326; margin-bottom: 12px; font-size: 16px; }
+        select, input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #dce2e6; font-size: 13px; outline: none; }
+        
+        .save-all-btn { 
+            width: 100%; 
+            padding: 14px; 
+            background: #0d1326; 
+            color: white; 
+            border: none; 
+            border-radius: 8px; 
+            margin-top: 20px; 
+            font-weight: 600; 
+            font-size: 14px;
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .save-all-btn:hover { background: #1a233d; }
+        
+        .lbl, .ot-lbl, .ot-amt-lbl { font-size: 10px; margin-top: 3px; font-weight: 600; }
+        .ot-lbl { color: #0d1326 !important; }
+        .ot-amt-lbl { color: #28a745; }
+        b { font-size: 13px; word-break: break-word; color: #111; }
+        .active-half { 
+            background: #f39c12 !important; 
+            color: white !important; 
+            border-color: #f39c12 !important; 
+        }
+
+        .page-footer { 
+            text-align: center; 
+            padding: 12px; 
+            font-size: 11px; 
+            color: #8c9ba5; 
+            background: #0d1326; 
+            position: fixed; 
+            bottom: 0; 
+            left: 0; 
+            width: 100%; 
+            z-index: 100; 
+            border-top: 1px solid #1a233d; 
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <a href="attendance.html">← Back</a>
+    <input type="date" id="attDate" style="width: auto; padding: 6px 10px; margin: 0; background: white; font-weight: 600; border-radius: 6px; border: 1px solid #dce2e6;">
+</div>
+
+<div class="container">
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Worker</th>
+                    <th style="text-align:center">Status</th>
+                    <th style="text-align:center">OT</th>
+                </tr>
+            </thead>
+            <tbody id="workerRows"></tbody>
+        </table>
+    </div>
+
+    <button id="saveBtn" class="save-all-btn" onclick="saveToFirebase()">Save Attendance</button>
+</div>
+
+<div class="modal" id="otModal">
+    <div class="modal-content">
+        <h4>OT Calculation</h4>
+        
+        <form onsubmit="event.preventDefault(); confirmOT();">
+            
+            <select id="otHours">
+                <option value="1">1 Hour</option>
+                <option value="2">2 Hours</option>
+                <option value="3">3 Hours</option>
+                <option value="4">4 Hours</option>
+                <option value="5">5 Hours</option>
+                <option value="6">6 Hours</option>
+            </select>
+            
+            <input type="number" id="otRate" placeholder="Rate per hour (₹)" required>
+            
+            <button type="submit" style="background:#0d1326; color:white; border:none; padding:12px; width:100%; border-radius:6px; cursor:pointer; font-weight:600;">Confirm OT</button>
+            
+            <button type="button" style="background:none; border:none; margin-top:10px; cursor:pointer; color:#8c9ba5; font-weight:600; font-size:12px;" onclick="cancelOT()">Cancel</button>
+            
+        </form>
+    </div>
+</div>
+
+<div class="modal" id="shiftModal">
+    <div class="modal-content">
+        <h4>Attendance Shift</h4>
+        <button style="background:#28a745; color:white; border:none; padding:12px; width:100%; border-radius:6px; margin-top:10px; font-weight:600; cursor:pointer;" onclick="setPresent('Full Day')">Full Day</button>
+        <button style="background:#f39c12; color:white; border:none; padding:12px; width:100%; border-radius:6px; margin-top:10px; font-weight:600; cursor:pointer;" onclick="setPresent('Half Day')">Half Day</button>
+    </div>
+</div>
+
+<footer class="page-footer">
+    © Vasant Constructions. All Rights Reserved.
+</footer>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyC0xLiByPlm4EGEHdxg77ylFswxgKQRnIo",
+        authDomain: "vasanthconstrutions-19c6f.firebaseapp.com",
+        databaseURL: "https://vasanthconstrutions-19c6f-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "vasanthconstrutions-19c6f",
+        storageBucket: "vasanthconstrutions-19c6f.firebasestorage.app",
+        messagingSenderId: "677215073901",
+        appId: "1:677215073901:web:d18cc1cc3ade5f34fd7164"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
+    let activeId = null;
+
+    onValue(ref(db, "workers"), (snapshot) => {
+        const tbody = document.getElementById("workerRows");
+        tbody.innerHTML = "";
+        snapshot.forEach(child => {
+            const w = child.val(); const id = child.key;
+            tbody.innerHTML += `
+                <tr id="row_${id}" data-id="${id}" data-name="${w.name}" data-status="Not Marked" data-othrs="0" data-otamt="0">
+                    <td><b>${w.name}</b></td>
+                    <td style="text-align:center">
+                        <button class="btn-status p-btn" onclick="openShift('${id}')">P</button>
+                        <button class="btn-status a-btn" onclick="setStatus('${id}', 'Absent')">A</button>
+                        <span class="lbl" style="display:block;"></span>
+                    </td>
+                    <td style="text-align:center">
+                        <label class="switch"><input type="checkbox" onchange="toggleOT('${id}', this)"><span class="slider"></span></label>
+                        <span class="ot-lbl" style="display:block;"></span>
+                        <span class="ot-amt-lbl" style="display:block;"></span>
+                    </td>
+                </tr>`;
+        });
+    });
+
+    window.openShift = (id) => { activeId = id; document.getElementById('shiftModal').style.display = 'flex'; };
+    window.setPresent = (type) => { setStatus(activeId, type); document.getElementById('shiftModal').style.display = 'none'; };
+
+    window.setStatus = (id, s) => {
+        const row = document.getElementById(`row_${id}`);
+        const pBtn = row.querySelector('.p-btn');
+        const aBtn = row.querySelector('.a-btn');
+        
+        row.setAttribute('data-status', s);
+        
+        pBtn.classList.remove('active-p', 'active-half');
+        aBtn.classList.remove('active-a');
+
+        if (s === 'Full Day') {
+            pBtn.classList.add('active-p');
+        } else if (s === 'Half Day') {
+            pBtn.classList.add('active-half');
+        } else if (s === 'Absent') {
+            aBtn.classList.add('active-a');
+        }
+        
+        row.querySelector('.lbl').innerText = s;
+    };
+
+    window.toggleOT = (id, cb) => {
+        const row = document.getElementById(`row_${id}`);
+        if(cb.checked) { 
+            activeId = id; 
+            document.getElementById('otModal').style.display = 'flex'; 
+        } else { 
+            row.setAttribute('data-othrs', 0); 
+            row.setAttribute('data-otamt', 0);
+            row.querySelector('.ot-lbl').innerText = "";
+            row.querySelector('.ot-amt-lbl').innerText = "";
+        }
+    };
+
+    window.confirmOT = () => {
+        const h = document.getElementById('otHours').value;
+        const r = document.getElementById('otRate').value;
+        if(!r) return alert("Enter rate");
+        
+        const row = document.getElementById(`row_${activeId}`);
+        const totalAmount = parseFloat(h) * parseFloat(r);
+        
+        row.setAttribute('data-othrs', h); 
+        row.setAttribute('data-otamt', totalAmount);
+        
+        row.querySelector('.ot-lbl').innerText = h + " Hour(s)";
+        row.querySelector('.ot-amt-lbl').innerText = "₹" + totalAmount.toFixed(0);
+        
+        document.getElementById('otModal').style.display = 'none';
+        document.getElementById('otRate').value = "";
+    };
+
+    window.cancelOT = () => {
+        const row = document.getElementById(`row_${activeId}`);
+        row.querySelector('input[type="checkbox"]').checked = false;
+        row.querySelector('.ot-lbl').innerText = "";
+        row.querySelector('.ot-amt-lbl').innerText = "";
+        document.getElementById('otModal').style.display = 'none';
+    };
+
+    window.saveToFirebase = () => {
+        const date = document.getElementById('attDate').value;
+        const saveBtn = document.getElementById('saveBtn');
+        const data = {};
+        const rows = document.querySelectorAll('#workerRows tr');
+        
+        if (rows.length === 0) return alert("No workers found to save.");
+
+        saveBtn.disabled = true;
+        saveBtn.innerText = "Saving Data...";
+        saveBtn.style.opacity = "0.7";
+
+        rows.forEach(r => {
+            const id = r.getAttribute('data-id');
+            data[id] = {
+                name: r.getAttribute('data-name'),
+                status: r.getAttribute('data-status'),
+                ot_hours: r.getAttribute('data-othrs'),
+                ot_amount: r.getAttribute('data-otamt')
+            };
+        });
+
+        set(ref(db, "attendance/" + date), data)
+            .then(() => {
+                alert("Attendance Saved Successfully!");
+                window.location.href = 'attendance.html'; 
+            })
+            .catch((error) => {
+                console.error("Save failed:", error);
+                alert("Error saving attendance. Please try again.");
+                
+                saveBtn.disabled = false;
+                saveBtn.innerText = "Save Attendance";
+                saveBtn.style.opacity = "1";
+            });
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Work Updates - Vasant Constructions</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col justify-between">
+
+  <header class="bg-white border-b border-gray-200 sticky top-0 z-10">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
+          <i data-lucide="hard-hat" class="text-amber-500"></i> Daily Work Updates
+        </h1>
+        <p class="text-sm text-gray-500">Permanent site work photos and progress updates.</p>
+      </div>
+      
+      <div class="flex items-center gap-3">
+        <a href="index.html" class="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-sm font-medium transition flex items-center gap-1">
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Home
+        </a>
+        <button onclick="openModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg flex items-center gap-2 shadow-sm transition">
+          <i data-lucide="plus-circle" class="w-5 h-5"></i> Upload Work Photo
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6 flex-grow w-full">
+    
+    <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mb-6">
+      <div class="flex bg-gray-200 p-1 rounded-xl w-full sm:w-auto overflow-x-auto">
+        <button id="tab-all" onclick="filterUpdates('all')" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition bg-white text-gray-900 shadow-sm">
+          All Time
+        </button>
+        <button id="tab-today" onclick="filterUpdates('today')" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:text-gray-900">
+          Today
+        </button>
+        <button id="tab-3days" onclick="filterUpdates('3days')" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:text-gray-900">
+          Last 3 Days
+        </button>
+        <button id="tab-7days" onclick="filterUpdates('7days')" class="tab-btn flex-1 sm:flex-initial px-4 py-2 rounded-lg text-sm font-medium transition text-gray-600 hover:text-gray-900">
+          Last 7 Days
+        </button>
+      </div>
+
+      <div class="text-xs text-gray-500 flex items-center gap-1">
+        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-600"></i>
+        <span>Permanent Database Storage Active</span>
+      </div>
+    </div>
+
+    <div id="gallery-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+    </div>
+
+    <div id="empty-state" class="hidden text-center py-16 bg-white rounded-2xl border border-dashed border-gray-300 my-6">
+      <i data-lucide="image-off" class="w-12 h-12 mx-auto text-gray-400 mb-3"></i>
+      <h3 class="text-lg font-medium text-gray-900">No updates found</h3>
+      <p class="text-sm text-gray-500 mt-1">No work photos uploaded for this time frame.</p>
+    </div>
+
+  </main>
+
+  <div id="upload-modal" class="fixed inset-0 bg-black/50 hidden items-center justify-center p-4 z-50">
+    <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl relative">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
+        <i data-lucide="x" class="w-5 h-5"></i>
+      </button>
+      
+      <h2 class="text-xl font-bold mb-4">Upload Work Update</h2>
+      
+      <form id="upload-form" onsubmit="handleUpload(event)" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Work Description / Title</label>
+          <input type="text" id="work-title" required placeholder="e.g., Brickwork completed on North Wall" class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none">
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Select Photo</label>
+          <input type="file" id="work-image" accept="image/*" required class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+        </div>
+
+        <div class="flex justify-end gap-3 pt-4 border-t">
+          <button type="button" onclick="closeModal()" class="px-4 py-2 border rounded-lg text-gray-600 hover:bg-gray-50">Cancel</button>
+          <button type="submit" id="submit-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Upload</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="bg-white border-t border-gray-200 text-center py-4 text-xs text-gray-500">
+    &copy; 2026 Vasant Constructions. All work updates saved permanently.
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+
+    // --- Replace with your real Firebase Config ---
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    let allUpdates = [];
+    let currentFilter = 'all';
+
+    // Fetch Realtime Data
+    const updatesRef = ref(db, 'daily_updates');
+    onValue(updatesRef, (snapshot) => {
+      const data = snapshot.val();
+      allUpdates = [];
+
+      if (data) {
+        Object.keys(data).forEach(key => {
+          allUpdates.push({
+            id: key,
+            ...data[key]
+          });
+        });
+      }
+
+      allUpdates.sort((a, b) => b.timestamp - a.timestamp);
+      renderGallery();
+    });
+
+    // Filter Logic
+    window.filterUpdates = function(range) {
+      currentFilter = range;
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('bg-white', 'text-gray-900', 'shadow-sm');
+        btn.classList.add('text-gray-600');
+      });
+      const activeTab = document.getElementById(`tab-${range}`);
+      activeTab.classList.add('bg-white', 'text-gray-900', 'shadow-sm');
+      activeTab.classList.remove('text-gray-600');
+      renderGallery();
+    };
+
+    // Render Gallery Cards
+    function renderGallery() {
+      const grid = document.getElementById('gallery-grid');
+      const emptyState = document.getElementById('empty-state');
+      grid.innerHTML = '';
+
+      const now = Date.now();
+      const startOfToday = new Date().setHours(0, 0, 0, 0);
+      const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
+      const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+      const filtered = allUpdates.filter(item => {
+        if (currentFilter === 'today') return item.timestamp >= startOfToday;
+        if (currentFilter === '3days') return (now - item.timestamp) <= THREE_DAYS_MS;
+        if (currentFilter === '7days') return (now - item.timestamp) <= SEVEN_DAYS_MS;
+        return true;
+      });
+
+      if (filtered.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+        filtered.forEach(item => {
+          const formattedDate = new Date(item.timestamp).toLocaleString('en-US', {
+            month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+          });
+
+          const card = `
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition flex flex-col">
+              <img src="${item.imageUrl}" alt="${item.title}" class="w-full h-48 object-cover bg-gray-100" loading="lazy">
+              <div class="p-4 flex-1 flex flex-col justify-between">
+                <div>
+                  <h3 class="font-semibold text-gray-900 text-base mb-1">${item.title}</h3>
+                </div>
+                <div class="mt-4 pt-3 border-t border-gray-100 flex justify-between items-center text-xs text-gray-500">
+                  <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3.5 h-3.5"></i> ${formattedDate}</span>
+                  <button onclick="deleteCard('${item.id}')" class="text-red-500 hover:text-red-700 p-1" title="Delete Update">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+          grid.insertAdjacentHTML('beforeend', card);
+        });
+      }
+      lucide.createIcons();
+    }
+
+    // Convert Image to Base64 & Save to Firebase Database
+    window.handleUpload = async function(e) {
+      e.preventDefault();
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.innerText = 'Uploading...';
+
+      const title = document.getElementById('work-title').value;
+      const fileInput = document.getElementById('work-image');
+      const file = fileInput.files[0];
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = async function(event) {
+          try {
+            const base64Data = event.target.result;
+            const updatesListRef = ref(db, 'daily_updates');
+            
+            await push(updatesListRef, {
+              title: title,
+              imageUrl: base64Data,
+              timestamp: Date.now(),
+              createdAt: new Date().toISOString()
+            });
+
+            closeModal();
+            document.getElementById('upload-form').reset();
+          } catch (err) {
+            alert("Upload failed: " + err.message);
+          } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = 'Upload';
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+
+    // Delete Card
+    window.deleteCard = async function(id) {
+      if (confirm("Are you sure you want to delete this update?")) {
+        const itemDbRef = ref(db, `daily_updates/${id}`);
+        await remove(itemDbRef);
+      }
+    };
+
+    window.openModal = function() {
+      document.getElementById('upload-modal').classList.remove('hidden');
+      document.getElementById('upload-modal').classList.add('flex');
+    };
+    
+    window.closeModal = function() {
+      document.getElementById('upload-modal').classList.add('hidden');
+      document.getElementById('upload-modal').classList.remove('flex');
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
