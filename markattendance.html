@@ -36,16 +36,29 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.04); 
             border: 1px solid #eef2f5;
             width: 100%; 
-            overflow: hidden;
+            overflow-x: auto;
         }
-        table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
         
         th { background: #0d1326; color: #fff; padding: 12px 10px; text-align: left; font-size: 13px; font-weight: 600; }
         td { padding: 12px 10px; border-bottom: 1px solid #eef2f5; vertical-align: middle; color: #222; }
         
-        th:nth-child(1), td:nth-child(1) { width: 35%; }
-        th:nth-child(2), td:nth-child(2) { width: 35%; text-align: center; }
-        th:nth-child(3), td:nth-child(3) { width: 30%; text-align: center; }
+        th:nth-child(1), td:nth-child(1) { width: 28%; }
+        th:nth-child(2), td:nth-child(2) { width: 28%; }
+        th:nth-child(3), td:nth-child(3) { width: 24%; text-align: center; }
+        th:nth-child(4), td:nth-child(4) { width: 20%; text-align: center; }
+
+        .project-select {
+            width: 100%;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 12px;
+            font-weight: 500;
+            background: #fff;
+            color: #0f172a;
+            outline: none;
+        }
 
         .btn-status { border: 1px solid #dce2e6; padding: 6px 12px; border-radius: 6px; cursor: pointer; background: white; font-size: 11px; font-weight: 600; transition: 0.2s; }
         .active-p { background: #28a745 !important; color: white !important; border-color: #28a745 !important; }
@@ -101,23 +114,13 @@
             z-index: 100; 
             border-top: 1px solid #1a233d; 
         }
-
-        /* Style for locked date input */
-        #attDate[disabled] {
-            background-color: #e2e8f0;
-            color: #334155;
-            cursor: not-allowed;
-            border: 1px solid #cbd5e1;
-            opacity: 1;
-        }
     </style>
 </head>
 <body>
 
 <div class="header">
     <a href="attendance.html">← Back</a>
-    <!-- Fixed date input field: disabled and non-editable -->
-    <input type="date" id="attDate" disabled style="width: auto; padding: 6px 10px; margin: 0; font-weight: 600; border-radius: 6px;">
+    <input type="date" id="attDate" style="width: auto; padding: 6px 10px; margin: 0; background: white; font-weight: 600; border-radius: 6px; border: 1px solid #dce2e6;">
 </div>
 
 <div class="container">
@@ -126,6 +129,7 @@
             <thead>
                 <tr>
                     <th>Worker</th>
+                    <th>Project / Workplace</th>
                     <th style="text-align:center">Status</th>
                     <th style="text-align:center">OT</th>
                 </tr>
@@ -176,7 +180,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC0xLiByPlm4EGEHdxg77ylFswxgKQRnIo",
@@ -190,38 +194,65 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
-    // Auto-fill today's date in local time zone and lock bounds
-    const today = new Date();
-    const localDateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-    const attDateInput = document.getElementById('attDate');
-    attDateInput.value = localDateStr;
-    attDateInput.min = localDateStr;
-    attDateInput.max = localDateStr;
-
+    document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
     let activeId = null;
+    let projectsList = [];
 
-    onValue(ref(db, "workers"), (snapshot) => {
-        const tbody = document.getElementById("workerRows");
-        tbody.innerHTML = "";
-        snapshot.forEach(child => {
-            const w = child.val(); const id = child.key;
-            tbody.innerHTML += `
-                <tr id="row_${id}" data-id="${id}" data-name="${w.name}" data-status="Not Marked" data-othrs="0" data-otamt="0">
-                    <td><b>${w.name}</b></td>
-                    <td style="text-align:center">
-                        <button class="btn-status p-btn" onclick="openShift('${id}')">P</button>
-                        <button class="btn-status a-btn" onclick="setStatus('${id}', 'Absent')">A</button>
-                        <span class="lbl" style="display:block;"></span>
-                    </td>
-                    <td style="text-align:center">
-                        <label class="switch"><input type="checkbox" onchange="toggleOT('${id}', this)"><span class="slider"></span></label>
-                        <span class="ot-lbl" style="display:block;"></span>
-                        <span class="ot-amt-lbl" style="display:block;"></span>
-                    </td>
-                </tr>`;
-        });
-    });
+    // Load available projects and workers from Firebase
+    async function initPage() {
+        try {
+            // Fetch projects list
+            const projectsSnap = await get(ref(db, "projects"));
+            projectsList = [];
+            if (projectsSnap.exists()) {
+                const data = projectsSnap.val();
+                Object.keys(data).forEach(key => {
+                    const p = data[key];
+                    const name = p.name || p.projectName || p.title || p;
+                    if (typeof name === 'string') projectsList.push(name);
+                });
+            }
+
+            // Listen for workers and populate table
+            onValue(ref(db, "workers"), (snapshot) => {
+                const tbody = document.getElementById("workerRows");
+                tbody.innerHTML = "";
+                
+                let projectOptionsHTML = `<option value="">Select Project</option>`;
+                projectsList.forEach(pName => {
+                    projectOptionsHTML += `<option value="${pName}">${pName}</option>`;
+                });
+
+                snapshot.forEach(child => {
+                    const w = child.val(); 
+                    const id = child.key;
+                    tbody.innerHTML += `
+                        <tr id="row_${id}" data-id="${id}" data-name="${w.name}" data-status="Not Marked" data-othrs="0" data-otamt="0">
+                            <td><b>${w.name}</b></td>
+                            <td>
+                                <select class="project-select" id="project_${id}">
+                                    ${projectOptionsHTML}
+                                </select>
+                            </td>
+                            <td style="text-align:center">
+                                <button class="btn-status p-btn" onclick="openShift('${id}')">P</button>
+                                <button class="btn-status a-btn" onclick="setStatus('${id}', 'Absent')">A</button>
+                                <span class="lbl" style="display:block;"></span>
+                            </td>
+                            <td style="text-align:center">
+                                <label class="switch"><input type="checkbox" onchange="toggleOT('${id}', this)"><span class="slider"></span></label>
+                                <span class="ot-lbl" style="display:block;"></span>
+                                <span class="ot-amt-lbl" style="display:block;"></span>
+                            </td>
+                        </tr>`;
+                });
+            });
+        } catch (e) {
+            console.error("Error initializing page:", e);
+        }
+    }
+
+    initPage();
 
     window.openShift = (id) => { activeId = id; document.getElementById('shiftModal').style.display = 'flex'; };
     window.setPresent = (type) => { setStatus(activeId, type); document.getElementById('shiftModal').style.display = 'none'; };
@@ -292,25 +323,42 @@
         const data = {};
         const rows = document.querySelectorAll('#workerRows tr');
         
-        if (rows.length === 0) return alert("No workers found to save.");
+        if (rows.length === 0) return alert("No workers found.");
+
+        let markedCount = 0;
+
+        rows.forEach(r => {
+            const id = r.getAttribute('data-id');
+            const status = r.getAttribute('data-status');
+            const otHrs = r.getAttribute('data-othrs');
+            const projectSelect = document.getElementById(`project_${id}`);
+            const selectedProject = projectSelect ? projectSelect.value : "";
+
+            // Save only if attendance status is marked or OT is recorded
+            if (status !== "Not Marked" || parseFloat(otHrs) > 0) {
+                markedCount++;
+                data[id] = {
+                    name: r.getAttribute('data-name'),
+                    project: selectedProject,
+                    status: status,
+                    ot_hours: otHrs,
+                    ot_amount: r.getAttribute('data-otamt')
+                };
+            }
+        });
+
+        if (markedCount === 0) {
+            alert("No worker attendance or OT was marked. Please mark at least one worker before saving.");
+            return;
+        }
 
         saveBtn.disabled = true;
         saveBtn.innerText = "Saving Data...";
         saveBtn.style.opacity = "0.7";
 
-        rows.forEach(r => {
-            const id = r.getAttribute('data-id');
-            data[id] = {
-                name: r.getAttribute('data-name'),
-                status: r.getAttribute('data-status'),
-                ot_hours: r.getAttribute('data-othrs'),
-                ot_amount: r.getAttribute('data-otamt')
-            };
-        });
-
         set(ref(db, "attendance/" + date), data)
             .then(() => {
-                alert("Attendance Saved Successfully!");
+                alert(`Attendance saved successfully for ${markedCount} worker(s)!`);
                 window.location.href = 'attendance.html'; 
             })
             .catch((error) => {
