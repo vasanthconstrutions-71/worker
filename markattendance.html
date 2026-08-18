@@ -101,13 +101,23 @@
             z-index: 100; 
             border-top: 1px solid #1a233d; 
         }
+
+        /* Style for locked date input */
+        #attDate[disabled] {
+            background-color: #e2e8f0;
+            color: #334155;
+            cursor: not-allowed;
+            border: 1px solid #cbd5e1;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
 
 <div class="header">
     <a href="attendance.html">← Back</a>
-    <input type="date" id="attDate" style="width: auto; padding: 6px 10px; margin: 0; background: white; font-weight: 600; border-radius: 6px; border: 1px solid #dce2e6;">
+    <!-- Fixed date input field: disabled and non-editable -->
+    <input type="date" id="attDate" disabled style="width: auto; padding: 6px 10px; margin: 0; font-weight: 600; border-radius: 6px;">
 </div>
 
 <div class="container">
@@ -180,7 +190,15 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
+
+    // Auto-fill today's date in local time zone and lock bounds
+    const today = new Date();
+    const localDateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    const attDateInput = document.getElementById('attDate');
+    attDateInput.value = localDateStr;
+    attDateInput.min = localDateStr;
+    attDateInput.max = localDateStr;
+
     let activeId = null;
 
     onValue(ref(db, "workers"), (snapshot) => {

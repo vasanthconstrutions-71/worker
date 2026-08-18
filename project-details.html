@@ -27,7 +27,7 @@
         <h1 class="text-lg sm:text-xl font-extrabold tracking-wide uppercase text-amber-500 text-right">
           Vasant Constructions
         </h1>
-        <p class="text-xs text-slate-400 text-right font-medium">Project Workspace</p>
+        <p class="text-xs text-slate-400 text-right font-medium">Worker Workspace</p>
       </div>
     </div>
   </header>
@@ -45,69 +45,16 @@
     <div id="projectWorkspace" class="hidden space-y-6">
 
       <!-- PROJECT SUMMARY BANNER -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <div class="flex items-center gap-3">
             <span id="statusBadge" class="px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full uppercase tracking-wider">Active Project</span>
-            
-            <select id="statusSelect" onchange="updateProjectStatus(this.value)" class="text-xs font-bold bg-slate-100 text-slate-700 border border-slate-300 rounded-lg px-2 py-1 focus:outline-none focus:border-amber-500 cursor-pointer">
-              <option value="Active">Mark as Active</option>
-              <option value="Completed">Mark as Completed</option>
-            </select>
-
             <span id="createdDate" class="text-xs text-slate-400"></span>
           </div>
           <h2 id="dispProjectName" class="text-2xl sm:text-3xl font-bold text-slate-900 mt-2">--</h2>
           <p class="text-sm font-semibold text-slate-500 mt-1">
             <i class="fa-solid fa-building text-amber-500 mr-1"></i> Client: <span id="dispCompanyName" class="text-slate-800">--</span>
           </p>
-        </div>
-
-        <div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center w-full lg:w-auto">
-          <div class="flex flex-col sm:flex-row gap-4 text-xs text-slate-600 bg-slate-50 p-4 rounded-xl border border-slate-100 w-full sm:w-auto">
-            <div>
-              <span class="block font-bold text-slate-400 uppercase text-[10px]">Contact Info</span>
-              <span id="dispContact" class="font-semibold text-slate-800 text-sm">--</span>
-            </div>
-            <div class="hidden sm:block border-l border-slate-300 h-8"></div>
-            <div>
-              <span class="block font-bold text-slate-400 uppercase text-[10px]">Site Location</span>
-              <span id="dispAddress" class="font-semibold text-slate-800 text-sm">--</span>
-            </div>
-          </div>
-
-          <!-- ACTION BUTTONS: EDIT & DELETE -->
-          <div class="flex items-center gap-2 self-stretch sm:self-auto">
-            <button onclick="openEditProjectModal()" class="flex-1 sm:flex-none px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs shadow-sm transition flex items-center justify-center gap-1.5 whitespace-nowrap">
-              <i class="fa-solid fa-pen-to-square text-amber-400"></i> Edit Details
-            </button>
-            <button onclick="deleteProjectWithVerification()" class="px-3 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl text-xs shadow-sm transition flex items-center justify-center gap-1.5 whitespace-nowrap" title="Delete Project">
-              <i class="fa-solid fa-trash-can"></i> Delete
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- FINANCIAL SUMMARY CONTAINER -->
-      <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
-        <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200/60">
-          <span class="block font-bold text-amber-800 uppercase text-xs">Total Project Value</span>
-          <span id="dispTotalProjectValue" class="block font-black text-2xl text-amber-700 mt-1">₹0</span>
-        </div>
-
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-          <span class="block font-bold text-slate-400 uppercase text-xs">Amount Invested By You</span>
-          <span id="dispInvestedAmount" class="block font-black text-2xl text-slate-900 mt-1">₹0</span>
-        </div>
-
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-          <span class="block font-bold text-slate-400 uppercase text-xs">Payment Given By Client</span>
-          <span id="dispClientPayment" class="block font-black text-2xl text-emerald-600 mt-1">₹0</span>
-        </div>
-
-        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
-          <span class="block font-bold text-slate-400 uppercase text-xs">Net Balance (Invested - Paid)</span>
-          <span id="dispNetBalance" class="block font-black text-2xl text-emerald-600 mt-1">₹0</span>
         </div>
       </div>
 
@@ -122,9 +69,6 @@
           </button>
           <button id="tabUsageBtn" onclick="switchTab('usage')" class="px-6 py-4 font-bold text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
             <i class="fa-solid fa-truck-ramp-box"></i> Daily Material Usage
-          </button>
-          <button id="tabPaymentBtn" onclick="switchTab('payment')" class="px-6 py-4 font-bold text-sm text-slate-500 border-b-2 border-transparent hover:text-slate-800 whitespace-nowrap flex items-center gap-2">
-            <i class="fa-solid fa-indian-rupee-sign"></i> Client Payments
           </button>
         </div>
 
@@ -162,7 +106,7 @@
           <div class="flex justify-between items-center mb-4">
             <h3 class="text-lg font-bold text-slate-900">Inward Purchase History</h3>
             <div class="flex items-center gap-2">
-              <button onclick="openPurchasePdfModal()" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
+              <button onclick="downloadPDF('purchase')" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
                 <i class="fa-solid fa-file-pdf"></i> Download PDF
               </button>
               <button onclick="openModal('purchaseModal')" class="px-4 py-2 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
@@ -178,12 +122,10 @@
                   <th class="py-3 px-4">Company Name</th>
                   <th class="py-3 px-4">Material Name</th>
                   <th class="py-3 px-4 text-right">Quantity Purchased</th>
-                  <th class="py-3 px-4 text-right">Total Cost (₹)</th>
-                  <th class="py-3 px-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody id="purchaseTableBody" class="divide-y divide-slate-100 text-sm font-medium">
-                <tr><td colspan="6" class="py-6 text-center text-slate-400">No purchase entries recorded.</td></tr>
+                <tr><td colspan="4" class="py-6 text-center text-slate-400">No purchase entries recorded.</td></tr>
               </tbody>
             </table>
           </div>
@@ -210,46 +152,10 @@
                   <th class="py-3 px-4">Material</th>
                   <th class="py-3 px-4 text-right">Quantity Used</th>
                   <th class="py-3 px-4">Work Remark</th>
-                  <th class="py-3 px-4 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody id="usageTableBody" class="divide-y divide-slate-100 text-sm font-medium">
-                <tr><td colspan="5" class="py-6 text-center text-slate-400">No material usage recorded yet.</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- TAB 4: CLIENT PAYMENTS -->
-        <div id="tabPayment" class="p-6 hidden">
-          <div class="flex justify-between items-center mb-4">
-            <div>
-              <h3 class="text-lg font-bold text-slate-900">Client Payment Receipts Ledger</h3>
-              <p class="text-xs text-slate-500 mt-0.5">Chronological breakdown showing incremental payment progress, total paid till date, and remaining balance.</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <button onclick="downloadPDF('payment')" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
-                <i class="fa-solid fa-file-pdf"></i> Download PDF
-              </button>
-              <button onclick="openModal('paymentModal')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs shadow-sm transition flex items-center gap-1.5">
-                <i class="fa-solid fa-plus"></i> Record Client Payment
-              </button>
-            </div>
-          </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse">
-              <thead>
-                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase">
-                  <th class="py-3 px-4">Date</th>
-                  <th class="py-3 px-4 text-right">Amount Paid (₹)</th>
-                  <th class="py-3 px-4 text-right">Total Paid Till Date (₹)</th>
-                  <th class="py-3 px-4 text-right">Remaining Amount (₹)</th>
-                  <th class="py-3 px-4">Payment Mode</th>
-                  <th class="py-3 px-4">Reference / Notes</th>
-                </tr>
-              </thead>
-              <tbody id="paymentTableBody" class="divide-y divide-slate-100 text-sm font-medium">
-                <tr><td colspan="6" class="py-6 text-center text-slate-400">No payment receipts recorded yet.</td></tr>
+                <tr><td colspan="4" class="py-6 text-center text-slate-400">No material usage recorded yet.</td></tr>
               </tbody>
             </table>
           </div>
@@ -260,65 +166,6 @@
     </div>
 
   </main>
-
-  <!-- MODAL: PURCHASE PDF OPTION -->
-  <div id="purchasePdfModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-sm w-full overflow-hidden border border-slate-200 p-6">
-      <h3 class="text-base font-bold text-slate-900 mb-2">Download Purchase PDF</h3>
-      <p class="text-xs text-slate-500 mb-6">Choose whether you want to include financial total costs in the exported PDF.</p>
-      
-      <div class="flex flex-col gap-3">
-        <button onclick="confirmPurchasePdf(true)" class="w-full py-2.5 px-4 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-xs transition">
-          Download WITH Amount
-        </button>
-        <button onclick="confirmPurchasePdf(false)" class="w-full py-2.5 px-4 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl text-xs transition">
-          Download WITHOUT Amount
-        </button>
-        <button onclick="closeModal('purchasePdfModal')" class="w-full py-2 text-slate-500 hover:text-slate-700 text-xs font-semibold">
-          Cancel
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL: EDIT PROJECT DETAILS -->
-  <div id="editProjectModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
-      <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-        <h3 class="text-base font-bold"><i class="fa-solid fa-pen-to-square text-amber-500 mr-2"></i>Edit Project Details</h3>
-        <button onclick="closeModal('editProjectModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-      <form id="editProjectForm" class="p-6 space-y-4">
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Project Name *</label>
-          <input type="text" id="editProjectName" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 font-medium text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Company / Client Name *</label>
-          <input type="text" id="editCompanyName" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 font-medium text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Total Project Amount (₹) *</label>
-          <input type="number" step="any" id="editTotalAmount" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 font-medium text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Contact Details *</label>
-          <input type="text" id="editContactDetails" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 font-medium text-sm">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Site Address *</label>
-          <textarea id="editAddress" rows="3" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-amber-500 text-slate-900 font-medium text-sm resize-none"></textarea>
-        </div>
-        <div class="pt-2 flex justify-end gap-3 border-t border-slate-100">
-          <button type="button" onclick="closeModal('editProjectModal')" class="px-5 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-sm hover:bg-slate-100 transition">Cancel</button>
-          <button type="submit" id="saveEditProjectBtn" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-sm shadow-md transition flex items-center gap-2">
-            <span>Save Changes</span>
-            <i class="fa-solid fa-check"></i>
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
 
   <!-- MODAL 1: ADD PURCHASE -->
   <div id="purchaseModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -341,63 +188,23 @@
             </button>
           </div>
 
-          <div class="border border-slate-200 rounded-xl overflow-visible">
+          <div class="border border-slate-200 rounded-xl overflow-hidden max-h-60 overflow-y-auto">
             <table class="w-full text-left text-xs">
               <thead class="bg-slate-100 font-bold text-slate-600 border-b border-slate-200">
                 <tr>
                   <th class="p-2.5">Material Name</th>
-                  <th class="p-2.5 w-28">Qty Purchased</th>
-                  <th class="p-2.5 w-32">Total Cost (₹)</th>
+                  <th class="p-2.5 w-32">Qty Purchased</th>
+                  <th class="p-2.5 w-10 text-center">Action</th>
                 </tr>
               </thead>
               <tbody id="purchaseItemsTableBody" class="divide-y divide-slate-100"></tbody>
             </table>
           </div>
-          <p class="text-[11px] text-slate-400 mt-1.5">
-            <i class="fa-solid fa-circle-info mr-1"></i>
-            <span class="text-emerald-600 font-bold">Green</span> = Material exists in Stock Summary. 
-            <span class="text-red-500 font-bold">Red</span> = New Material (Will be registered as new item).
-          </p>
         </div>
 
         <div class="pt-2 flex justify-end gap-3">
           <button type="button" onclick="closeModal('purchaseModal')" class="px-4 py-2 rounded-xl border text-slate-600 text-xs font-semibold hover:bg-slate-50">Cancel</button>
           <button type="submit" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow">Save All Purchase Entries</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL: EDIT PURCHASE ENTRY -->
-  <div id="editPurchaseModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
-      <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-        <h3 class="text-base font-bold"><i class="fa-solid fa-pen-to-square text-amber-500 mr-2"></i>Edit Purchase Entry</h3>
-        <button onclick="closeModal('editPurchaseModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-      <form id="editPurchaseForm" class="p-6 space-y-4">
-        <input type="hidden" id="editPurchaseKey">
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Company / Supplier Name *</label>
-          <input type="text" id="editPurVendor" required class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-amber-500">
-        </div>
-        <div class="relative">
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Material Name *</label>
-          <input type="text" id="editPurMaterial" required autocomplete="off" class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none transition" oninput="validatePurchaseMaterialInput(this)">
-          <div class="pur-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-40 overflow-y-auto"></div>
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Quantity Purchased *</label>
-          <input type="number" step="any" id="editPurQty" required class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-amber-500">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Total Cost (₹) *</label>
-          <input type="number" step="any" id="editPurAmount" required class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-amber-500">
-        </div>
-
-        <div class="pt-2 flex justify-end gap-3 border-t border-slate-100">
-          <button type="button" onclick="closeModal('editPurchaseModal')" class="px-4 py-2 rounded-xl border text-slate-600 text-xs font-semibold hover:bg-slate-50">Cancel</button>
-          <button type="submit" id="saveEditPurchaseBtn" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow">Update Purchase</button>
         </div>
       </form>
     </div>
@@ -428,6 +235,7 @@
                   <th class="p-2.5">Material Name (Select/Type)</th>
                   <th class="p-2.5 w-32">Qty Used</th>
                   <th class="p-2.5">Work Remark</th>
+                  <th class="p-2.5 w-10 text-center">Action</th>
                 </tr>
               </thead>
               <tbody id="usageItemsTableBody" class="divide-y divide-slate-100"></tbody>
@@ -444,72 +252,6 @@
     </div>
   </div>
 
-  <!-- MODAL: EDIT USAGE ENTRY -->
-  <div id="editUsageModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
-      <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-        <h3 class="text-base font-bold"><i class="fa-solid fa-pen-to-square text-amber-500 mr-2"></i>Edit Material Usage Entry</h3>
-        <button onclick="closeModal('editUsageModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-      <form id="editUsageForm" class="p-6 space-y-4">
-        <input type="hidden" id="editUsageKey">
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Material Name *</label>
-          <input type="text" id="editUseMaterial" list="availableMaterialsList" required class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-amber-500" oninput="validateMaterialInput(this)">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Quantity Used *</label>
-          <input type="number" step="any" id="editUseQty" required class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-amber-500">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Work Remark</label>
-          <input type="text" id="editUseRemark" class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-amber-500">
-        </div>
-
-        <div class="pt-2 flex justify-end gap-3 border-t border-slate-100">
-          <button type="button" onclick="closeModal('editUsageModal')" class="px-4 py-2 rounded-xl border text-slate-600 text-xs font-semibold hover:bg-slate-50">Cancel</button>
-          <button type="submit" id="saveEditUsageBtn" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow">Update Usage</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- MODAL 3: ADD PAYMENT -->
-  <div id="paymentModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
-      <div class="bg-slate-900 text-white px-6 py-4 flex items-center justify-between">
-        <h3 class="text-base font-bold"><i class="fa-solid fa-indian-rupee-sign text-emerald-400 mr-2"></i>Record Client Payment</h3>
-        <button onclick="closeModal('paymentModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
-      </div>
-      <form id="paymentForm" class="p-6 space-y-4">
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Payment Date *</label>
-          <input type="date" id="payDate" required disabled class="w-full px-4 py-2 rounded-xl border text-sm font-medium bg-slate-100 text-slate-500 cursor-not-allowed focus:outline-none">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Amount Received (₹) *</label>
-          <input type="number" step="any" id="payAmount" required placeholder="e.g. 100000" class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-emerald-500">
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Payment Mode</label>
-          <select id="payMode" class="w-full px-4 py-2 rounded-xl border text-sm font-medium bg-white focus:outline-none focus:border-emerald-500">
-            <option value="Bank Transfer (NEFT/UPI)">Bank Transfer (NEFT/UPI)</option>
-            <option value="Cheque">Cheque</option>
-            <option value="Cash">Cash</option>
-          </select>
-        </div>
-        <div>
-          <label class="block text-xs font-bold uppercase text-slate-600 mb-1">Notes / Transaction ID</label>
-          <input type="text" id="payNotes" placeholder="e.g. UPI Ref #9876543210" class="w-full px-4 py-2 rounded-xl border text-sm font-medium focus:outline-none focus:border-emerald-500">
-        </div>
-        <div class="pt-2 flex justify-end gap-3">
-          <button type="button" onclick="closeModal('paymentModal')" class="px-4 py-2 rounded-xl border text-slate-600 text-xs font-semibold">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow hover:bg-emerald-500 transition">Save Payment</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <!-- FOOTER -->
   <footer class="bg-slate-900 text-slate-400 py-4 text-center text-xs border-t border-slate-800">
     <p>© Vasant Constructions. All Rights Reserved.</p>
@@ -518,7 +260,7 @@
   <!-- FIREBASE LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getDatabase, ref, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+    import { getDatabase, ref, push, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC0xLiByPlm4EGEHdxg77ylFswxgKQRnIo",
@@ -535,8 +277,6 @@
 
     let purchasedMaterialsList = [];
     let currentProjectData = {};
-    let purchasesDataMap = {};
-    let usageDataMap = {};
 
     const urlParams = new URLSearchParams(window.location.search);
     const projectKey = urlParams.get('id');
@@ -545,58 +285,6 @@
       alert("No project selected! Redirecting back to projects list.");
       window.location.href = "project.html";
     }
-
-    // Dynamic Validation and Dropdown for Record Purchase Input
-    window.validatePurchaseMaterialInput = (input) => {
-      const val = input.value.trim();
-      const parent = input.closest('.relative');
-      const dropdown = parent.querySelector('.pur-dropdown');
-
-      if (!val) {
-        input.classList.remove('border-emerald-500', 'bg-emerald-50', 'border-red-500', 'bg-red-50');
-        input.classList.add('border-slate-300');
-        dropdown.classList.add('hidden');
-        dropdown.innerHTML = '';
-        return;
-      }
-
-      const matches = purchasedMaterialsList.filter(m => m.toLowerCase().includes(val.toLowerCase()));
-      const exactMatch = purchasedMaterialsList.some(m => m.toLowerCase() === val.toLowerCase());
-
-      if (exactMatch) {
-        input.classList.remove('border-slate-300', 'border-red-500', 'bg-red-50');
-        input.classList.add('border-emerald-500', 'bg-emerald-50');
-      } else {
-        input.classList.remove('border-slate-300', 'border-emerald-500', 'bg-emerald-50');
-        input.classList.add('border-red-500', 'bg-red-50');
-      }
-
-      if (matches.length > 0) {
-        dropdown.innerHTML = '';
-        matches.forEach(match => {
-          const item = document.createElement('div');
-          item.className = 'px-3 py-2 text-xs font-semibold text-slate-700 hover:bg-amber-50 cursor-pointer border-b border-slate-100 last:border-none';
-          item.textContent = match;
-          item.onclick = () => {
-            input.value = match;
-            validatePurchaseMaterialInput(input);
-            dropdown.classList.add('hidden');
-          };
-          dropdown.appendChild(item);
-        });
-        dropdown.classList.remove('hidden');
-      } else {
-        dropdown.classList.add('hidden');
-        dropdown.innerHTML = '';
-      }
-    };
-
-    // Global Click to close custom purchase dropdowns
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.relative')) {
-        document.querySelectorAll('.pur-dropdown').forEach(d => d.classList.add('hidden'));
-      }
-    });
 
     // Dynamic Row Helpers
     window.addPurchaseRow = () => {
@@ -607,18 +295,28 @@
       tr.id = rowId;
       tr.className = 'item-row hover:bg-slate-50';
       tr.innerHTML = `
-        <td class="p-2 relative">
-          <input type="text" required autocomplete="off" placeholder="Type or select material..." class="row-material w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs font-medium focus:outline-none transition" oninput="validatePurchaseMaterialInput(this)">
-          <div class="pur-dropdown hidden absolute left-2 right-2 top-full mt-1 bg-white border border-slate-200 rounded-xl shadow-xl z-50 max-h-36 overflow-y-auto"></div>
+        <td class="p-2">
+          <input type="text" required placeholder="e.g. Cement Bags" class="row-material w-full px-2 py-1.5 border rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
         </td>
         <td class="p-2">
-          <input type="number" step="any" required placeholder="e.g. 50" class="row-qty w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+          <input type="number" step="any" required placeholder="e.g. 50" class="row-qty w-full px-2 py-1.5 border rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
         </td>
-        <td class="p-2">
-          <input type="number" step="any" required placeholder="e.g. 18000" class="row-cost w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+        <td class="p-2 text-center">
+          <button type="button" onclick="removePurchaseRow('${rowId}')" class="text-red-500 hover:text-red-700 font-bold text-sm">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
         </td>
       `;
       tbody.appendChild(tr);
+    };
+
+    window.removePurchaseRow = (rowId) => {
+      const tbody = document.getElementById('purchaseItemsTableBody');
+      if (tbody.children.length > 1) {
+        document.getElementById(rowId).remove();
+      } else {
+        alert("At least one material item is required.");
+      }
     };
 
     window.addUsageRow = () => {
@@ -633,13 +331,27 @@
           <input type="text" list="availableMaterialsList" required placeholder="Select or type material..." class="use-row-material w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs font-medium focus:outline-none transition" oninput="validateMaterialInput(this)">
         </td>
         <td class="p-2">
-          <input type="number" step="any" required placeholder="e.g. 15" class="use-row-qty w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+          <input type="number" step="any" required placeholder="e.g. 15" class="use-row-qty w-full px-2 py-1.5 border rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
         </td>
         <td class="p-2">
-          <input type="text" placeholder="e.g. Foundation Casting" class="use-row-remark w-full px-2 py-1.5 border border-slate-300 rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+          <input type="text" placeholder="e.g. Foundation Casting" class="use-row-remark w-full px-2 py-1.5 border rounded-lg text-xs font-medium focus:outline-none focus:border-amber-500">
+        </td>
+        <td class="p-2 text-center">
+          <button type="button" onclick="removeUsageRow('${rowId}')" class="text-red-500 hover:text-red-700 font-bold text-sm">
+            <i class="fa-solid fa-trash-can"></i>
+          </button>
         </td>
       `;
       tbody.appendChild(tr);
+    };
+
+    window.removeUsageRow = (rowId) => {
+      const tbody = document.getElementById('usageItemsTableBody');
+      if (tbody.children.length > 1) {
+        document.getElementById(rowId).remove();
+      } else {
+        alert("At least one usage entry is required.");
+      }
     };
 
     window.validateMaterialInput = (input) => {
@@ -679,120 +391,12 @@
         });
         addUsageRow();
       }
-      if (id === 'paymentModal') {
-        const todayStr = new Date().toLocaleDateString('en-CA');
-        const dateInput = document.getElementById('payDate');
-        dateInput.value = todayStr;
-        dateInput.min = todayStr;
-        dateInput.max = todayStr;
-      }
-    };
-
-    window.openEditProjectModal = () => {
-      document.getElementById('editProjectName').value = currentProjectData.projectName || '';
-      document.getElementById('editCompanyName').value = currentProjectData.companyName || '';
-      document.getElementById('editTotalAmount').value = currentProjectData.totalAmount || '';
-      document.getElementById('editContactDetails').value = currentProjectData.contactDetails || '';
-      document.getElementById('editAddress').value = currentProjectData.address || '';
-      openModal('editProjectModal');
-    };
-
-    // Purchase Edit Handler
-    window.openEditPurchaseModal = (key) => {
-      const item = purchasesDataMap[key];
-      if (!item) return;
-      document.getElementById('editPurchaseKey').value = key;
-      document.getElementById('editPurVendor').value = item.vendor || '';
-      
-      const matInput = document.getElementById('editPurMaterial');
-      matInput.value = item.materialName || '';
-      validatePurchaseMaterialInput(matInput);
-
-      document.getElementById('editPurQty').value = item.quantity || 0;
-      document.getElementById('editPurAmount').value = item.amount || 0;
-      openModal('editPurchaseModal');
-    };
-
-    // Usage Edit Handler
-    window.openEditUsageModal = (key) => {
-      const item = usageDataMap[key];
-      if (!item) return;
-
-      const dataList = document.getElementById('availableMaterialsList');
-      dataList.innerHTML = '';
-      purchasedMaterialsList.forEach(mat => {
-        const opt = document.createElement('option');
-        opt.value = mat;
-        dataList.appendChild(opt);
-      });
-
-      document.getElementById('editUsageKey').value = key;
-      const matInput = document.getElementById('editUseMaterial');
-      matInput.value = item.materialName || '';
-      validateMaterialInput(matInput);
-      document.getElementById('editUseQty').value = item.quantity || 0;
-      document.getElementById('editUseRemark').value = item.remark || '';
-      openModal('editUsageModal');
     };
 
     window.closeModal = (id) => document.getElementById(id).classList.add('hidden');
 
-    window.openPurchasePdfModal = () => {
-      openModal('purchasePdfModal');
-    };
-
-    window.confirmPurchasePdf = (includeAmount) => {
-      closeModal('purchasePdfModal');
-      downloadPDF('purchase', includeAmount);
-    };
-
-    // TWO-STEP DELETE VERIFICATION WITH AUTO PDF DOWNLOADS
-    window.deleteProjectWithVerification = async () => {
-      const confirmDownload = confirm(
-        "Do you want to download all summary PDF reports before deleting this project permanently?\n\n" +
-        "- Material Stock Summary PDF\n" +
-        "- Inward Purchases PDF\n" +
-        "- Daily Material Usage PDF\n" +
-        "- Client Payments PDF\n\n" +
-        "Click OK to download all PDFs and proceed, or Cancel to skip downloading."
-      );
-
-      if (confirmDownload) {
-        try {
-          downloadPDF('stock');
-          downloadPDF('purchase', true);
-          downloadPDF('usage');
-          downloadPDF('payment');
-        } catch (e) {
-          console.error("Error exporting PDFs prior to deletion:", e);
-        }
-      }
-
-      const finalConfirm = confirm(
-        "Are you sure you want to delete all the data related to this project permanently?\n\nThis action cannot be undone."
-      );
-
-      if (finalConfirm) {
-        try {
-          await remove(ref(db, 'projects/' + projectKey));
-          alert("Project and all associated data deleted successfully!");
-          window.location.href = "project.html";
-        } catch (err) {
-          alert("Failed to delete project: " + err.message);
-        }
-      }
-    };
-
-    window.updateProjectStatus = async (statusValue) => {
-      try {
-        await update(ref(db, 'projects/' + projectKey), { status: statusValue });
-      } catch (err) {
-        alert("Error updating status: " + err.message);
-      }
-    };
-
     window.switchTab = (tabName) => {
-      ['stock', 'purchase', 'usage', 'payment'].forEach(t => {
+      ['stock', 'purchase', 'usage'].forEach(t => {
         document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('hidden');
         const btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn');
         btn.classList.remove('text-amber-600', 'border-amber-500');
@@ -817,18 +421,10 @@
 
         document.getElementById('dispProjectName').textContent = data.projectName || projectKey;
         document.getElementById('dispCompanyName').textContent = data.companyName || 'N/A';
-        document.getElementById('dispContact').textContent = data.contactDetails || 'N/A';
-        document.getElementById('dispAddress').textContent = data.address || 'N/A';
         document.getElementById('createdDate').textContent = data.createdAt ? 'Created on: ' + new Date(data.createdAt).toLocaleDateString() : '';
-
-        const totalAmt = data.totalAmount ? parseFloat(data.totalAmount) : 0;
-        document.getElementById('dispTotalProjectValue').textContent = `₹${totalAmt.toLocaleString('en-IN')}`;
 
         const currentStatus = data.status || 'Active';
         const badge = document.getElementById('statusBadge');
-        const select = document.getElementById('statusSelect');
-
-        select.value = currentStatus;
         badge.textContent = `${currentStatus} Project`;
 
         if (currentStatus === 'Completed') {
@@ -837,12 +433,8 @@
           badge.className = "px-3 py-1 bg-amber-100 text-amber-800 font-bold text-xs rounded-full uppercase tracking-wider";
         }
 
-        purchasesDataMap = data.purchases || {};
-        usageDataMap = data.usage || {};
-
-        const purchases = Object.keys(purchasesDataMap).map(k => ({ key: k, ...purchasesDataMap[k] }));
-        const usages = Object.keys(usageDataMap).map(k => ({ key: k, ...usageDataMap[k] }));
-        const payments = data.payments ? Object.values(data.payments) : [];
+        const purchases = data.purchases ? Object.values(data.purchases) : [];
+        const usages = data.usage ? Object.values(data.usage) : [];
 
         const uniqueMatSet = new Set();
         purchases.forEach(p => {
@@ -850,117 +442,14 @@
         });
         purchasedMaterialsList = Array.from(uniqueMatSet);
 
-        calculateFinancials(purchases, payments);
-
         renderStockTable(purchases, usages);
         renderPurchasesTable(purchases);
         renderUsageTable(usages);
-        renderPaymentLedgerTable(payments, totalAmt);
       } else {
         alert("Project not found in database.");
         window.location.href = "project.html";
       }
     });
-
-    document.getElementById('editProjectForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const saveBtn = document.getElementById('saveEditProjectBtn');
-      saveBtn.disabled = true;
-      saveBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Saving...`;
-
-      const newProjectName = document.getElementById('editProjectName').value.trim();
-      const newCompanyName = document.getElementById('editCompanyName').value.trim();
-      const newTotalAmount = document.getElementById('editTotalAmount').value.trim();
-      const newContactDetails = document.getElementById('editContactDetails').value.trim();
-      const newAddress = document.getElementById('editAddress').value.trim();
-
-      try {
-        await update(ref(db, 'projects/' + projectKey), {
-          projectName: newProjectName,
-          companyName: newCompanyName,
-          totalAmount: newTotalAmount ? parseFloat(newTotalAmount) : 0,
-          contactDetails: newContactDetails,
-          address: newAddress
-        });
-        closeModal('editProjectModal');
-      } catch (err) {
-        alert("Failed to update project: " + err.message);
-      } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = `<span>Save Changes</span><i class="fa-solid fa-check"></i>`;
-      }
-    });
-
-    // SUBMIT PURCHASE EDIT
-    document.getElementById('editPurchaseForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const key = document.getElementById('editPurchaseKey').value;
-      const vendor = document.getElementById('editPurVendor').value.trim();
-      const matInput = document.getElementById('editPurMaterial');
-      const quantity = document.getElementById('editPurQty').value;
-      const amount = document.getElementById('editPurAmount').value;
-
-      const matVal = matInput.value.trim();
-      const matchedName = purchasedMaterialsList.find(m => m.toLowerCase() === matVal.toLowerCase()) || matVal;
-
-      try {
-        await update(ref(db, `projects/${projectKey}/purchases/${key}`), {
-          vendor: vendor,
-          materialName: matchedName,
-          quantity: quantity,
-          amount: amount
-        });
-        closeModal('editPurchaseModal');
-      } catch (err) {
-        alert("Failed to update purchase entry: " + err.message);
-      }
-    });
-
-    // SUBMIT USAGE EDIT
-    document.getElementById('editUsageForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const key = document.getElementById('editUsageKey').value;
-      const matInput = document.getElementById('editUseMaterial');
-      const quantity = document.getElementById('editUseQty').value;
-      const remark = document.getElementById('editUseRemark').value.trim();
-
-      if (!validateMaterialInput(matInput)) {
-        alert("Please select a valid material that exists in Inward Purchases.");
-        return;
-      }
-
-      const matVal = matInput.value.trim();
-      const matchedName = purchasedMaterialsList.find(m => m.toLowerCase() === matVal.toLowerCase()) || matVal;
-
-      try {
-        await update(ref(db, `projects/${projectKey}/usage/${key}`), {
-          materialName: matchedName,
-          quantity: quantity,
-          remark: remark
-        });
-        closeModal('editUsageModal');
-      } catch (err) {
-        alert("Failed to update usage entry: " + err.message);
-      }
-    });
-
-    function calculateFinancials(purchases, payments) {
-      const totalInvested = purchases.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
-      const totalReceived = payments.reduce((sum, p) => sum + parseFloat(p.amount || 0), 0);
-      const netBalance = totalInvested - totalReceived;
-
-      document.getElementById('dispInvestedAmount').textContent = `₹${totalInvested.toLocaleString('en-IN')}`;
-      document.getElementById('dispClientPayment').textContent = `₹${totalReceived.toLocaleString('en-IN')}`;
-
-      const netElement = document.getElementById('dispNetBalance');
-      if (netBalance < 0) {
-        netElement.textContent = `- ₹${Math.abs(netBalance).toLocaleString('en-IN')}`;
-        netElement.className = "block font-black text-2xl text-red-600 mt-1";
-      } else {
-        netElement.textContent = `₹${netBalance.toLocaleString('en-IN')}`;
-        netElement.className = "block font-black text-2xl text-emerald-600 mt-1";
-      }
-    }
 
     function renderStockTable(purchases, usages) {
       const stockMap = {};
@@ -1009,22 +498,14 @@
 
     function renderPurchasesTable(purchases) {
       const tbody = document.getElementById('purchaseTableBody');
-      tbody.innerHTML = purchases.length === 0 ? '<tr><td colspan="6" class="py-6 text-center text-slate-400">No purchase entries recorded.</td></tr>' : '';
-      [...purchases].reverse().forEach(p => {
+      tbody.innerHTML = purchases.length === 0 ? '<tr><td colspan="4" class="py-6 text-center text-slate-400">No purchase entries recorded.</td></tr>' : '';
+      purchases.reverse().forEach(p => {
         tbody.insertAdjacentHTML('beforeend', `
           <tr class="hover:bg-slate-50">
-            <td class="py-3 px-4 text-xs text-slate-500">${p.date ? new Date(p.date).toLocaleDateString() : '-'}</td>
+            <td class="py-3 px-4 text-xs text-slate-500">${new Date(p.date).toLocaleDateString()}</td>
             <td class="py-3 px-4 text-slate-800 font-medium">${p.vendor || '-'}</td>
             <td class="py-3 px-4 font-bold text-slate-900">${p.materialName}</td>
             <td class="py-3 px-4 text-right font-semibold text-slate-800">${p.quantity}</td>
-            <td class="py-3 px-4 text-right font-bold text-slate-900">₹${parseFloat(p.amount || 0).toLocaleString('en-IN')}</td>
-            <td class="py-3 px-4 text-center">
-              <div class="flex items-center justify-center gap-2">
-                <button onclick="openEditPurchaseModal('${p.key}')" class="text-amber-600 hover:text-amber-800 font-bold text-xs p-1">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-              </div>
-            </td>
           </tr>
         `);
       });
@@ -1032,74 +513,20 @@
 
     function renderUsageTable(usages) {
       const tbody = document.getElementById('usageTableBody');
-      tbody.innerHTML = usages.length === 0 ? '<tr><td colspan="5" class="py-6 text-center text-slate-400">No material usage recorded yet.</td></tr>' : '';
-      [...usages].reverse().forEach(u => {
+      tbody.innerHTML = usages.length === 0 ? '<tr><td colspan="4" class="py-6 text-center text-slate-400">No material usage recorded yet.</td></tr>' : '';
+      usages.reverse().forEach(u => {
         tbody.insertAdjacentHTML('beforeend', `
           <tr class="hover:bg-slate-50">
-            <td class="py-3 px-4 text-xs text-slate-500">${u.date ? new Date(u.date).toLocaleDateString() : '-'}</td>
+            <td class="py-3 px-4 text-xs text-slate-500">${new Date(u.date).toLocaleDateString()}</td>
             <td class="py-3 px-4 font-bold text-slate-900">${u.materialName}</td>
             <td class="py-3 px-4 text-right font-semibold">${u.quantity}</td>
             <td class="py-3 px-4 text-slate-600">${u.remark || '-'}</td>
-            <td class="py-3 px-4 text-center">
-              <div class="flex items-center justify-center gap-2">
-                <button onclick="openEditUsageModal('${u.key}')" class="text-amber-600 hover:text-amber-800 font-bold text-xs p-1">
-                  <i class="fa-solid fa-pen-to-square"></i>
-                </button>
-              </div>
-            </td>
           </tr>
         `);
       });
     }
 
-    function renderPaymentLedgerTable(payments, totalProjectValue) {
-      const tbody = document.getElementById('paymentTableBody');
-      if (payments.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="py-6 text-center text-slate-400">No payment receipts recorded yet.</td></tr>';
-        return;
-      }
-
-      const sortedPayments = [...payments].sort((a, b) => new Date(a.date) - new Date(b.date));
-
-      let runningTotalPaid = 0;
-      const ledgerRows = sortedPayments.map(p => {
-        const currentPaidAmount = parseFloat(p.amount || 0);
-        runningTotalPaid += currentPaidAmount;
-        const remainingBalance = totalProjectValue - runningTotalPaid;
-
-        return {
-          date: p.date,
-          amountPaid: currentPaidAmount,
-          totalPaidTillDate: runningTotalPaid,
-          remainingAmount: remainingBalance,
-          mode: p.mode,
-          notes: p.notes
-        };
-      });
-
-      ledgerRows.reverse();
-
-      tbody.innerHTML = '';
-      ledgerRows.forEach(row => {
-        const isFullyPaid = row.remainingAmount <= 0;
-        const pendingDisplay = isFullyPaid 
-          ? `<span class="text-emerald-600 font-extrabold">₹0 (Fully Paid)</span>`
-          : `<span class="text-amber-700 font-bold">₹${row.remainingAmount.toLocaleString('en-IN')}</span>`;
-
-        tbody.insertAdjacentHTML('beforeend', `
-          <tr class="hover:bg-slate-50">
-            <td class="py-3 px-4 text-xs font-semibold text-slate-600">${new Date(row.date).toLocaleDateString()}</td>
-            <td class="py-3 px-4 text-right font-bold text-slate-900">₹${row.amountPaid.toLocaleString('en-IN')}</td>
-            <td class="py-3 px-4 text-right font-black text-emerald-600">₹${row.totalPaidTillDate.toLocaleString('en-IN')}</td>
-            <td class="py-3 px-4 text-right font-extrabold">${pendingDisplay}</td>
-            <td class="py-3 px-4"><span class="px-2 py-0.5 bg-slate-100 text-slate-700 text-xs rounded-md font-medium">${row.mode}</span></td>
-            <td class="py-3 px-4 text-slate-600 text-xs">${row.notes || '-'}</td>
-          </tr>
-        `);
-      });
-    }
-
-    // MULTI-ROW PURCHASE FORM SUBMISSION (Supports existing & new red materials)
+    // MULTI-ROW PURCHASE FORM SUBMISSION
     document.getElementById('purchaseForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const vendor = document.getElementById('purVendor').value;
@@ -1107,18 +534,13 @@
       const now = new Date().toISOString();
 
       const promises = Array.from(rows).map(row => {
-        const rawMatName = row.querySelector('.row-material').value.trim();
+        const materialName = row.querySelector('.row-material').value;
         const quantity = row.querySelector('.row-qty').value;
-        const amount = row.querySelector('.row-cost').value;
-
-        // Reuse exact casing if exists, otherwise register exact typed value as new
-        const matchedName = purchasedMaterialsList.find(m => m.toLowerCase() === rawMatName.toLowerCase()) || rawMatName;
 
         return push(ref(db, `projects/${projectKey}/purchases`), {
           vendor: vendor,
-          materialName: matchedName,
+          materialName: materialName,
           quantity: quantity,
-          amount: amount,
           date: now
         });
       });
@@ -1170,31 +592,13 @@
       e.target.reset();
     });
 
-    // PAYMENT SUBMISSION WITH LOCKED TODAY'S DATE
-    document.getElementById('paymentForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const todayStr = new Date().toLocaleDateString('en-CA');
-      
-      await push(ref(db, `projects/${projectKey}/payments`), {
-        amount: document.getElementById('payAmount').value,
-        mode: document.getElementById('payMode').value,
-        notes: document.getElementById('payNotes').value,
-        date: todayStr
-      });
-      
-      closeModal('paymentModal');
-      e.target.reset();
-    });
-
     // GENERAL PDF EXPORT FUNCTION
-    window.downloadPDF = (type, includeAmount = true) => {
+    window.downloadPDF = (type) => {
       const { jsPDF } = window.jspdf;
       const doc = new jsPDF();
 
       const projName = currentProjectData.projectName || 'Project';
       const compName = currentProjectData.companyName || 'N/A';
-      const contact = currentProjectData.contactDetails || 'N/A';
-      const address = currentProjectData.address || 'N/A';
 
       // Header Section
       doc.setFontSize(16);
@@ -1205,13 +609,11 @@
       doc.setFont('helvetica', 'normal');
       doc.text(`Project Name: ${projName}`, 14, 23);
       doc.text(`Client: ${compName}`, 14, 29);
-      doc.text(`Contact: ${contact}`, 14, 35);
-      doc.text(`Address: ${address}`, 14, 41);
-      doc.text(`Generated Date: ${new Date().toLocaleDateString('en-IN')}`, 14, 47);
+      doc.text(`Generated Date: ${new Date().toLocaleDateString('en-IN')}`, 14, 35);
 
       const cleanText = (str) => {
         if (!str) return '';
-        return str.replace(/₹/g, 'Rs. ').trim();
+        return str.trim();
       };
 
       let title = "";
@@ -1235,44 +637,12 @@
           }
         });
       } else if (type === 'purchase') {
-        title = includeAmount ? "Inward Purchase History (With Amount)" : "Inward Purchase History (Without Amount)";
-        if (includeAmount) {
-          headers = [["Date", "Company Name", "Material Name", "Quantity Purchased", "Total Cost (Rs.)"]];
-          const rows = document.querySelectorAll('#purchaseTableBody tr');
-          rows.forEach(tr => {
-            const tds = tr.querySelectorAll('td');
-            if (tds.length >= 5) {
-              bodyData.push([
-                cleanText(tds[0].innerText),
-                cleanText(tds[1].innerText),
-                cleanText(tds[2].innerText),
-                cleanText(tds[3].innerText),
-                cleanText(tds[4].innerText)
-              ]);
-            }
-          });
-        } else {
-          headers = [["Date", "Company Name", "Material Name", "Quantity Purchased"]];
-          const rows = document.querySelectorAll('#purchaseTableBody tr');
-          rows.forEach(tr => {
-            const tds = tr.querySelectorAll('td');
-            if (tds.length >= 4) {
-              bodyData.push([
-                cleanText(tds[0].innerText),
-                cleanText(tds[1].innerText),
-                cleanText(tds[2].innerText),
-                cleanText(tds[3].innerText)
-              ]);
-            }
-          });
-        }
-      } else if (type === 'usage') {
-        title = "Site Consumption Log";
-        headers = [["Date", "Material", "Quantity Used", "Work Remark"]];
-        const rows = document.querySelectorAll('#usageTableBody tr');
+        title = "Inward Purchase History";
+        headers = [["Date", "Company Name", "Material Name", "Quantity Purchased"]];
+        const rows = document.querySelectorAll('#purchaseTableBody tr');
         rows.forEach(tr => {
           const tds = tr.querySelectorAll('td');
-          if (tds.length >= 4) {
+          if (tds.length === 4) {
             bodyData.push([
               cleanText(tds[0].innerText),
               cleanText(tds[1].innerText),
@@ -1281,20 +651,18 @@
             ]);
           }
         });
-      } else if (type === 'payment') {
-        title = "Client Payment Receipts Ledger";
-        headers = [["Date", "Amount Paid (Rs.)", "Total Paid Till Date (Rs.)", "Remaining Amount (Rs.)", "Payment Mode", "Notes"]];
-        const rows = document.querySelectorAll('#paymentTableBody tr');
+      } else if (type === 'usage') {
+        title = "Site Consumption Log";
+        headers = [["Date", "Material", "Quantity Used", "Work Remark"]];
+        const rows = document.querySelectorAll('#usageTableBody tr');
         rows.forEach(tr => {
           const tds = tr.querySelectorAll('td');
-          if (tds.length === 6) {
+          if (tds.length === 4) {
             bodyData.push([
               cleanText(tds[0].innerText),
               cleanText(tds[1].innerText),
               cleanText(tds[2].innerText),
-              cleanText(tds[3].innerText),
-              cleanText(tds[4].innerText),
-              cleanText(tds[5].innerText)
+              cleanText(tds[3].innerText)
             ]);
           }
         });
@@ -1302,10 +670,10 @@
 
       doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
-      doc.text(title, 14, 57);
+      doc.text(title, 14, 45);
 
       doc.autoTable({
-        startY: 62,
+        startY: 50,
         head: headers,
         body: bodyData,
         theme: 'striped',

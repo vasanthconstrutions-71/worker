@@ -3,76 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vasant Constructions - Worker Dashboard</title>
+    <title>Vasant Constructions - Worker Portal</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="logo.png">
     <style>
-/* --- PRINT STYLES --- */
-@media print {
-    body * { visibility: hidden; }
-    #reportModal, #reportModal * { visibility: visible; }
-    
-    #reportModal { 
-        position: absolute; 
-        left: 0; 
-        top: 0; 
-        width: 100%; 
-        display: block !important; 
-    }
-
-    .close-btn, .print-btn, .tab-btn-group, .payment-form, .close-x { 
-        display: none !important; 
-    }
-
-    @page {
-        margin: 10mm 10mm 65mm 10mm; 
-    }
-
-    .print-footer {
-        display: flex !important;
-        justify-content: space-between;
-        position: fixed !important; 
-        bottom: 0 !important;
-        left: 0;
-        right: 0;
-        width: 100%;
-        background: white !important; 
-        padding: 10px 40px 0px 40px; 
-        z-index: 9999;
-        border-top: none !important; 
-    }
-
-    .log-item { 
-        page-break-inside: avoid !important;
-        display: flex !important;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 8px !important;
-        padding: 8px;
-        border: 1px solid #eee;
-        border-radius: 5px;
-    }
-
-    .sig-box {
-        border-bottom: 2px solid #000;
-        width: 230px;
-        text-align: center;
-        padding-bottom: 10px;
-        font-size: 13px;
-        font-weight: 700;
-        color: #000;
-        border-top: none;
-    }
-
-    .modal-content {
-        overflow: visible !important;
-        height: auto !important;
-    }
-}
-
-.print-only-spacer, .print-footer { display: none; }
-
-        /* --- THEME COLORS --- */
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
         body { background: #f1f5f9; color: #1e293b; padding-bottom: 50px; }
         
@@ -95,8 +29,6 @@
         .btn { border:none; padding:10px 18px; border-radius:8px; cursor:pointer; color:white; font-size:14px; font-weight: 600; text-decoration: none; text-align: center; transition: 0.2s; }
         .home-btn { background: #475569; color: white; }
         .home-btn:hover { background: #334155; }
-        .add-btn { background: #f59e0b; color: #0f172a; }
-        .add-btn:hover { background: #d97706; }
         .attendance-btn { background: #2563eb; color: white; }
         .attendance-btn:hover { background: #1d4ed8; }
         
@@ -108,64 +40,16 @@
         .summary-mini-card b { font-size: 22px; color: #0f172a; display: block; margin-top: 4px; }
 
         .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        select { flex: 1; min-width: 140px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; background: white; color: #0f172a; outline: none; }
-
-        .stats-container { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid #ef4444; }
-        .stats-info h4 { color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-        .stats-info h2 { color: #ef4444; font-size: 26px; margin-top: 2px; font-weight: 700; }
+        select { flex: 1; max-width: 300px; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-weight: 600; background: white; color: #0f172a; outline: none; }
 
         .summary-card { background: #fff; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); border: 1px solid #e2e8f0; overflow: hidden; }
         .table-wrapper { overflow-x: auto; position: relative; }
-        table { width: 100%; border-collapse: collapse; min-width: 650px; }
+        table { width: 100%; border-collapse: collapse; min-width: 400px; }
         th { background: #0f172a; color: #f8fafc; padding: 14px; text-align: left; font-size: 13px; font-weight: 600; white-space: nowrap; }
         td { padding: 14px; border-bottom: 1px solid #f1f5f9; font-size: 14px; white-space: nowrap; color: #334155; }
 
         th:first-child, td:first-child { position: sticky; left: 0; background: #fff; z-index: 10; border-right: 2px solid #f1f5f9; }
         th:first-child { background: #0f172a; z-index: 11; }
-
-        .action-btns { display: flex; gap: 6px; }
-        .btn-report { background: #0f172a; padding: 6px 12px; font-size: 12px; border-radius: 6px; color: white; border: none; cursor: pointer; }
-        .btn-report:hover { background: #1e293b; }
-        .btn-delete { background: #ef4444; padding: 6px 12px; font-size: 12px; border-radius: 6px; color: white; border: none; cursor: pointer; }
-        .btn-delete:hover { background: #dc2626; }
-
-        .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(15, 23, 42, 0.75); justify-content:center; align-items:center; z-index: 1000; padding: 15px; }
-        .modal-content { background:#fff; width:100%; max-width:480px; padding:25px; border-radius:16px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .modal-content h3 { color: #0f172a; margin-bottom: 15px; }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; font-size: 12px; margin-bottom: 5px; font-weight: 600; color: #475569; }
-        .input-group input { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; outline: none; font-size: 14px; }
-        .input-group input:focus { border-color: #f59e0b; }
-
-        .log-item { display: flex; justify-content: space-between; padding: 10px; border-radius: 8px; margin-bottom: 6px; font-size: 13px; align-items: center; border: 1px solid #e2e8f0; }
-        .log-full { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
-        .log-half { background: #fffbeb; border-color: #fde68a; color: #92400e; }
-        .log-absent { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
-
-        .close-btn { width: 100%; padding: 12px; background: #e2e8f0; color: #334155; border: none; border-radius: 8px; margin-top: 10px; font-weight: 600; cursor: pointer; }
-        .save-btn { width: 100%; padding: 12px; background: #f59e0b; color: #0f172a; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        .save-btn:hover { background: #d97706; }
-
-        .profile-box { background:#f8fafc; padding:12px 15px; border-radius:8px; margin-bottom:15px; font-size:13px; line-height: 1.6; border: 1px solid #e2e8f0; }
-
-        .tab-btn-group { display: flex; gap: 8px; margin-bottom: 15px; }
-        .tab-btn { flex: 1; padding: 10px; border: 1px solid #cbd5e1; background: #f8fafc; color: #475569; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 13px; }
-        .tab-btn.active { background: #0f172a; color: #f59e0b; border-color: #0f172a; }
-
-        .report-section { display: none; }
-        .report-section.active { display: block; }
-        .payment-form { background: #f8fafc; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 15px; }
-        .summary-box { background:#f8fafc; padding:15px; border-radius:8px; margin-bottom:15px; border:1px solid #cbd5e1; }
-        
-        .print-btn { background: #0f172a; color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; font-weight: 600; margin-top: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .print-btn:hover { background: #1e293b; }
-
-        .close-x {
-            position: absolute; top: 15px; right: 15px; background: #f1f5f9; border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 18px; font-weight: bold; color: #475569; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; z-index: 100;
-        }
-        .close-x:hover { background: #ef4444; color: white; }
-
-        #reportModal .modal-content { position: relative; padding-top: 40px; }
 
         .page-footer { text-align: center; padding: 15px; font-size: 12px; color: #94a3b8; background: #0f172a; position: fixed; bottom: 0; left: 0; width: 100%; z-index: 100; }
     </style>
@@ -177,13 +61,12 @@
         <div style="background: #f59e0b; width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 20px;">🏗️</div>
         <div>
             <h2>VASANT CONSTRUCTIONS</h2>
-            <p>Management System</p>
+            <p>Worker Portal</p>
         </div>
     </div>
     <div class="btn-group">
         <a href="index.html" class="btn home-btn">Home</a>
         <a href="markattendance.html" class="btn attendance-btn">Mark Attendance</a>
-        <button class="btn add-btn" onclick="openAddModal()">+ Add Worker</button>
     </div>
 </div>
 
@@ -196,19 +79,6 @@
 
     <div class="controls">
         <select id="monthFilter" onchange="loadDashboard()"></select>
-        <select id="statusFilter" onchange="loadDashboard()">
-            <option value="all">All Workers</option>
-            <option value="pending">Only Pending (Udaari)</option>
-            <option value="settled">Settled (Nill)</option>
-        </select>
-    </div>
-
-    <div class="stats-container">
-        <div class="stats-info">
-            <h4>Total Pending Balance (This Month)</h4>
-            <h2 id="overallPending">₹0</h2>
-        </div>
-        <div style="font-size: 30px;">💸</div>
     </div>
 
     <div class="summary-card">
@@ -217,69 +87,11 @@
                 <thead>
                     <tr>
                         <th>Worker Name</th>
-                        <th>Rate (₹)</th>
-                        <th>Total Days</th>
-                        <th>Pending Bal</th>
-                        <th>Actions</th>
+                        <th>Total Days Worked</th>
                     </tr>
                 </thead>
                 <tbody id="dashboardBody"></tbody>
             </table>
-        </div>
-    </div>
-</div>
-
-<div class="modal" id="addWorkerModal">
-    <div class="modal-content">
-        <h3>Register New Worker</h3>
-        <form onsubmit="event.preventDefault(); saveNewWorker();">
-            <div class="input-group"><label>Name *</label><input type="text" id="newName" required></div>
-            <div class="input-group"><label>Amount Per Day *</label><input type="number" id="newRate" required></div>
-            <div class="input-group"><label>Mobile *</label><input type="tel" id="newMobile" maxlength="10" required></div>
-            <div class="input-group"><label>Aadhar *</label><input type="text" id="newAadhar" maxlength="14" oninput="formatAadhar(this)" required></div>
-            <div class="input-group"><label>Address *</label><input type="text" id="newAddress" required></div>
-            
-            <button type="submit" class="save-btn">Save Worker</button>
-            <button type="button" class="close-btn" onclick="closeAddModal()">Cancel</button>
-        </form>
-    </div>
-</div>
-
-<div class="modal" id="reportModal">
-    <div class="modal-content">
-        <button class="close-x" onclick="closeReport()">×</button>
-
-        <h3 id="repName" style="text-align:center"></h3>
-        <p id="repMonth" style="font-size: 11px; text-align:center; margin-bottom:10px; color:#64748b;"></p>
-        
-        <div id="workerProfile" class="profile-box"></div>
-        
-        <div class="tab-btn-group">
-            <button class="tab-btn active" id="tab-att" onclick="switchTab('attendance')">Attendance</button>
-            <button class="tab-btn" id="tab-pay" onclick="switchTab('payment')">Payment</button>
-        </div>
-
-        <div id="attendanceSection" class="report-section active">
-            <div id="reportLogs"></div>
-        </div>
-
-        <div id="paymentSection" class="report-section">
-            <div id="paymentSummary"></div>
-            <div class="payment-form">
-                <label style="font-size:11px; font-weight:600; color:#475569;">Add New Payment (₹)</label>
-                <form onsubmit="event.preventDefault(); submitPayment();" style="display:flex; gap:5px; margin-top:5px;">
-                    <input type="number" id="payAmount" placeholder="Amount" style="padding:8px; width:60%; border:1px solid #cbd5e1; border-radius:6px;" required>
-                    <button type="submit" style="background:#16a34a; color:white; border:none; padding:8px; border-radius:6px; flex:1; cursor:pointer; font-weight:600;">Pay</button>
-                </form>
-            </div>
-            <h4 style="font-size:12px; margin-bottom:10px; color:#64748b;">Transaction History</h4>
-            <div id="paymentLogs"></div>
-        </div>
-        
-        <button class="print-btn" onclick="startSmartPrint()">🖨️ Print Report</button>
-        <div class="print-footer">
-            <div class="sig-box">Receiver's Signature</div>
-            <div class="sig-box">Proprietor / Company Signature</div>
         </div>
     </div>
 </div>
@@ -290,7 +102,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, get, set, push, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC0xLiByPlm4EGEHdxg77ylFswxgKQRnIo",
@@ -307,7 +119,7 @@
 
     const monthSelect = document.getElementById('monthFilter');
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    let workersData = {}, attendanceData = {}, paymentsData = {}, currentWId = null;
+    let workersData = {}, attendanceData = {};
 
     const now = new Date();
     for (let i = 0; i < 12; i++) {
@@ -318,95 +130,27 @@
         monthSelect.appendChild(opt);
     }
 
-    window.formatAadhar = (i) => {
-        let v = i.value.replace(/\D/g, '');
-        let f = v.match(/.{1,4}/g)?.join(' ') || ""; 
-        i.value = f.substring(0, 14);
-    };
-
-    window.openAddModal = () => document.getElementById('addWorkerModal').style.display = 'flex';
-    window.closeAddModal = () => document.getElementById('addWorkerModal').style.display = 'none';
-
-    // Save only worker details to the "workers" node
-    window.saveNewWorker = async () => {
-        const name = document.getElementById('newName').value.trim();
-        const rate = document.getElementById('newRate').value.trim();
-        const mobile = document.getElementById('newMobile').value.trim();
-        const aadhar = document.getElementById('newAadhar').value.trim();
-        const address = document.getElementById('newAddress').value.trim();
-        
-        const saveBtn = document.querySelector('.save-btn');
-
-        if (!name || !rate || !mobile || !aadhar || !address) {
-            alert("All fields are mandatory.");
-            return;
-        }
-
-        saveBtn.disabled = true; 
-        saveBtn.innerText = "Saving...";
-        saveBtn.style.opacity = "0.5";
-        saveBtn.style.cursor = "not-allowed";
-
-        const wId = name.replace(/\s+/g, '_') + "_" + Date.now();
-        
-        try {
-            await set(ref(db, 'workers/' + wId), { 
-                name, 
-                amount: rate, 
-                mobile, 
-                aadhar, 
-                address 
-            });
-            
-            await loadDashboard();
-            closeAddModal();
-            
-            saveBtn.disabled = false;
-            saveBtn.innerText = "Save Worker";
-            saveBtn.style.opacity = "1";
-            saveBtn.style.cursor = "pointer";
-
-        } catch (e) { 
-            alert("Error saving: " + e.message);
-            saveBtn.disabled = false;
-            saveBtn.innerText = "Save Worker";
-            saveBtn.style.opacity = "1";
-        }
-    };
-
-    window.deleteWorker = async (wId, wName) => {
-        if (confirm(`Are you sure you want to delete ${wName}?`)) {
-            try {
-                await remove(ref(db, 'workers/' + wId));
-                loadDashboard();
-            } catch (e) { alert("Error deleting worker"); }
-        }
-    };
-
-    // Load data from separate "workers", "attendance", and "payments" nodes
+    // Load data from "workers" and "attendance" nodes
     window.loadDashboard = async () => {
         const selectedMonth = monthSelect.value;
-        const statusFilter = document.getElementById('statusFilter').value;
         const today = new Date().toISOString().split('T')[0];
 
-        const [wSnap, aSnap, pSnap] = await Promise.all([
+        const [wSnap, aSnap] = await Promise.all([
             get(ref(db, "workers")), 
-            get(ref(db, "attendance")), 
-            get(ref(db, "payments"))
+            get(ref(db, "attendance"))
         ]);
         
         workersData = wSnap.val() || {};
         attendanceData = aSnap.val() || {};
-        paymentsData = pSnap.val() || {};
 
         const tableBody = document.getElementById("dashboardBody");
         tableBody.innerHTML = "";
         
-        let overallPendingTotal = 0, todayPresent = 0, todayAbsent = 0, workerCount = Object.keys(workersData).length;
+        let todayPresent = 0, todayAbsent = 0, workerCount = Object.keys(workersData).length;
 
         Object.keys(workersData).forEach(wId => {
             const w = workersData[wId];
-            let totalEarning = 0, totalPaid = 0, totalDays = 0, totalOT = 0;
+            let totalDays = 0;
 
             if (attendanceData[today] && attendanceData[today][wId]) {
                 const s = attendanceData[today][wId].status;
@@ -419,154 +163,20 @@
                     let rec = attendanceData[d][wId];
                     if(rec.status === "Full Day") totalDays += 1;
                     if(rec.status === "Half Day") totalDays += 0.5;
-                    let ot = parseFloat(rec.ot_amount || 0);
-                    totalOT += ot;
-                    totalEarning += (rec.status === "Full Day" ? parseFloat(w.amount) : rec.status === "Half Day" ? parseFloat(w.amount)/2 : 0) + ot;
                 }
             }
-
-            for (let pId in paymentsData) {
-                const p = paymentsData[pId];
-                if (p.workerId === wId && p.date.startsWith(selectedMonth)) {
-                    totalPaid += parseFloat(p.amount);
-                }
-            }
-
-            const balance = totalEarning - totalPaid;
-            if (statusFilter === "pending" && balance <= 0) return;
-            if (statusFilter === "settled" && balance > 0) return;
-            if(balance > 0) overallPendingTotal += balance;
 
             tableBody.innerHTML += `<tr>
                 <td><b>${w.name}</b></td>
-                <td>₹${w.amount}</td>
-                <td>${totalDays}</td>
-                <td style="color:${balance > 0 ? '#dc2626' : '#16a34a'}; font-weight:600;">₹${balance.toFixed(0)}</td>
-                <td>
-                    <div class="action-btns">
-                        <button class="btn-report" onclick="viewReport('${wId}')">Report</button>
-                        <button class="btn-delete" onclick="deleteWorker('${wId}', '${w.name}')">Delete</button>
-                    </div>
-                </td>
+                <td>${totalDays} Days</td>
             </tr>`;
         });
 
         document.getElementById("statTotal").innerText = workerCount;
         document.getElementById("statPresent").innerText = todayPresent;
         document.getElementById("statAbsent").innerText = todayAbsent;
-        document.getElementById("overallPending").innerText = "₹" + overallPendingTotal.toFixed(0);
     };
 
-    window.viewReport = (wId) => {
-        currentWId = wId;
-        const worker = workersData[wId];
-        const selectedMonth = monthSelect.value;
-        document.getElementById("repName").innerText = worker.name;
-        document.getElementById("repMonth").innerText = "Month: " + monthSelect.options[monthSelect.selectedIndex].text;
-        document.getElementById("workerProfile").innerHTML = `<p><b>🆔 Aadhar:</b> ${worker.aadhar}</p><p><b>📞 Mobile:</b> ${worker.mobile}</p>`;
-        
-        let monthEarned = 0, totalDays = 0, totalOT = 0, aLogs = "";
-        Object.keys(attendanceData).sort().reverse().forEach(date => {
-            if (date.startsWith(selectedMonth) && attendanceData[date][wId]) {
-                const d = attendanceData[date][wId];
-                if(d.status !== "Not Marked") {
-                    let daily = (d.status === "Full Day") ? parseFloat(worker.amount) : (d.status === "Half Day") ? parseFloat(worker.amount)/2 : 0;
-                    if(d.status === "Full Day") totalDays += 1;
-                    if(d.status === "Half Day") totalDays += 0.5;
-                    let ot = parseFloat(d.ot_amount || 0);
-                    totalOT += ot;
-                    let dayTotal = daily + ot;
-                    monthEarned += dayTotal;
-                    let colorClass = d.status === "Full Day" ? "log-full" : d.status === "Half Day" ? "log-half" : "log-absent";
-                    let otBadge = ot > 0 ? `<br><small>+ OT: ₹${ot}</small>` : "";
-                    aLogs += `<div class="log-item ${colorClass}"><span>📅 ${date} <br><b>(${d.status})</b> ${otBadge}</span><span style="font-weight:600;">₹${dayTotal.toFixed(0)}</span></div>`;
-                }
-            }
-        });
-        document.getElementById("reportLogs").innerHTML = aLogs || "No records.";
-
-        let monthPaid = 0, pLogs = "";
-        for (let pId in paymentsData) {
-            const p = paymentsData[pId];
-            if (p.workerId === wId && p.date.startsWith(selectedMonth)) {
-                monthPaid += parseFloat(p.amount);
-                pLogs += `<div class="log-item"><span>💸 Paid on ${p.date}</span><span style="color:#16a34a; font-weight:600;">- ₹${p.amount}</span></div>`;
-            }
-        }
-
-        const balance = monthEarned - monthPaid;
-
-        document.getElementById("paymentSummary").innerHTML = `
-            <div class="summary-box">
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>Total Earning:</span><span style="font-weight:600;">₹${monthEarned.toFixed(0)}</span></div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px;"><span>Total Paid:</span><span style="color:#16a34a; font-weight:600;">₹${monthPaid.toFixed(0)}</span></div>
-                <hr style="border:0; border-top:1px solid #cbd5e1; margin:8px 0;">
-                <div style="display:flex; justify-content:space-between; font-size:16px;"><b>Balance:</b><b style="color:${balance > 0 ? '#dc2626' : '#16a34a'}">₹${balance.toFixed(0)}</b></div>
-            </div>`;
-        
-        document.getElementById("paymentLogs").innerHTML = pLogs || "<p style='font-size:12px; color:#94a3b8;'>No transactions.</p>";
-        document.getElementById("reportModal").style.display = "flex";
-        switchTab('attendance');
-    };
-
-    window.switchTab = (tab) => {
-        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-        document.querySelectorAll('.report-section').forEach(s => s.classList.remove('active'));
-        document.getElementById('tab-' + tab.substring(0,3)).classList.add('active');
-        document.getElementById(tab + 'Section').classList.add('active');
-    };
-
-    window.submitPayment = async () => {
-        const amtInput = document.getElementById("payAmount");
-        const amt = amtInput.value;
-        const payBtn = document.querySelector("#paymentSection button");
-
-        if(!amt || amt <= 0) return alert("Enter amount");
-
-        payBtn.disabled = true;
-        payBtn.innerText = "Processing...";
-        payBtn.style.opacity = "0.5";
-        payBtn.style.cursor = "not-allowed";
-
-        try {
-            await push(ref(db, "payments"), { 
-                workerId: currentWId, 
-                amount: amt, 
-                date: new Date().toISOString().split('T')[0] 
-            });
-            
-            amtInput.value = ""; 
-            closeReport();
-            loadDashboard();
-        } catch (e) {
-            alert("Error: " + e.message);
-        } finally {
-            payBtn.disabled = false;
-            payBtn.innerText = "Pay";
-            payBtn.style.opacity = "1";
-            payBtn.style.cursor = "pointer";
-        }
-    };
-
-    window.startSmartPrint = () => {
-        const isPaymentActive = document.getElementById('paymentSection').classList.contains('active');
-        
-        document.body.classList.remove('print-payment-only', 'print-attendance-only');
-
-        if (isPaymentActive) {
-            document.body.classList.add('print-payment-only');
-        } else {
-            document.body.classList.add('print-attendance-only');
-        }
-
-        window.print();
-
-        setTimeout(() => {
-            document.body.classList.remove('print-payment-only', 'print-attendance-only');
-        }, 500);
-    };
-
-    window.closeReport = () => document.getElementById("reportModal").style.display = "none";
     loadDashboard();
 </script>
 </body>
