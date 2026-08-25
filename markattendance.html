@@ -18,6 +18,8 @@
             background: #0d1326;
             color: white;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
         .header a {
             text-decoration: none;
@@ -27,8 +29,70 @@
             transition: 0.2s;
         }
         .header a:hover { color: #e0951a; }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-badge {
+            font-size: 12px;
+            color: #cbd5e1;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            background-color: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-logout:hover {
+            background-color: #dc2626;
+        }
         
         .container { max-width: 1100px; margin: 0 auto; padding: 0 15px; }
+
+        /* Search Section Styling */
+        .search-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 10px 14px;
+            margin: 0;
+            border-radius: 6px;
+            border: 1px solid #cbd5e1;
+            font-size: 13px;
+            outline: none;
+            background: #fff;
+        }
+        .search-btn {
+            background: #0d1326;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .search-btn:hover {
+            background: #1a233d;
+        }
 
         .table-container { 
             background: #fff; 
@@ -38,15 +102,17 @@
             width: 100%; 
             overflow-x: auto;
         }
-        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        table { width: 100%; border-collapse: collapse; min-width: 750px; }
         
         th { background: #0d1326; color: #fff; padding: 12px 10px; text-align: left; font-size: 13px; font-weight: 600; }
         td { padding: 12px 10px; border-bottom: 1px solid #eef2f5; vertical-align: middle; color: #222; }
         
-        th:nth-child(1), td:nth-child(1) { width: 28%; }
-        th:nth-child(2), td:nth-child(2) { width: 28%; }
-        th:nth-child(3), td:nth-child(3) { width: 24%; text-align: center; }
-        th:nth-child(4), td:nth-child(4) { width: 20%; text-align: center; }
+        th:nth-child(1), td:nth-child(1) { width: 20%; }
+        th:nth-child(2), td:nth-child(2) { width: 20%; }
+        th:nth-child(3), td:nth-child(3) { width: 15%; text-align: center; }
+        th:nth-child(4), td:nth-child(4) { width: 15%; text-align: center; }
+        th:nth-child(5), td:nth-child(5) { width: 15%; text-align: center; }
+        th:nth-child(6), td:nth-child(6) { width: 15%; text-align: center; }
 
         .project-select {
             width: 100%;
@@ -64,6 +130,19 @@
         .active-p { background: #28a745 !important; color: white !important; border-color: #28a745 !important; }
         .active-a { background: #ff4d4f !important; color: white !important; border-color: #ff4d4f !important; }
 
+        .btn-save-row { 
+            background: #0d1326; 
+            color: white; 
+            border: none; 
+            padding: 7px 14px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 11px; 
+            font-weight: 600; 
+            transition: 0.2s; 
+        }
+        .btn-save-row:hover { background: #28a745; }
+
         .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0; background:#ccc; transition:.4s; border-radius:20px; }
@@ -75,21 +154,7 @@
         .modal-content { background:#fff; padding:20px; border-radius:12px; width: 100%; max-width: 340px; text-align:center; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
         .modal-content h4 { color: #0d1326; margin-bottom: 12px; font-size: 16px; }
         select, input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #dce2e6; font-size: 13px; outline: none; }
-        
-        .save-all-btn { 
-            width: 100%; 
-            padding: 14px; 
-            background: #0d1326; 
-            color: white; 
-            border: none; 
-            border-radius: 8px; 
-            margin-top: 20px; 
-            font-weight: 600; 
-            font-size: 14px;
-            cursor: pointer; 
-            transition: 0.2s;
-        }
-        .save-all-btn:hover { background: #1a233d; }
+        input[readonly] { background-color: #e2e8f0; cursor: not-allowed; color: #475569; }
         
         .lbl, .ot-lbl, .ot-amt-lbl { font-size: 10px; margin-top: 3px; font-weight: 600; }
         .ot-lbl { color: #0d1326 !important; }
@@ -120,10 +185,20 @@
 
 <div class="header">
     <a href="attendance.html">← Back</a>
-    <input type="date" id="attDate" style="width: auto; padding: 6px 10px; margin: 0; background: white; font-weight: 600; border-radius: 6px; border: 1px solid #dce2e6;">
+    <input type="date" id="attDate" readonly style="width: auto; padding: 6px 10px; margin: 0; background: #e2e8f0; font-weight: 600; border-radius: 6px; border: 1px solid #cbd5e1; cursor: not-allowed; pointer-events: none;">
+    <div class="header-right">
+        <span class="user-badge" id="userBadge">Loading...</span>
+        <button class="btn-logout" id="logoutBtn">Logout</button>
+    </div>
 </div>
 
 <div class="container">
+    <!-- Search Bar with Search Button -->
+    <div class="search-container">
+        <input type="text" id="searchWorker" class="search-input" placeholder="Enter worker name...">
+        <button type="button" id="btnSearch" class="search-btn">Search</button>
+    </div>
+
     <div class="table-container">
         <table>
             <thead>
@@ -132,13 +207,13 @@
                     <th>Project / Workplace</th>
                     <th style="text-align:center">Status</th>
                     <th style="text-align:center">OT</th>
+                    <th style="text-align:center">Updater</th>
+                    <th style="text-align:center">Action</th>
                 </tr>
             </thead>
             <tbody id="workerRows"></tbody>
         </table>
     </div>
-
-    <button id="saveBtn" class="save-all-btn" onclick="saveToFirebase()">Save Attendance</button>
 </div>
 
 <div class="modal" id="otModal">
@@ -146,7 +221,6 @@
         <h4>OT Calculation</h4>
         
         <form onsubmit="event.preventDefault(); confirmOT();">
-            
             <select id="otHours">
                 <option value="1">1 Hour</option>
                 <option value="2">2 Hours</option>
@@ -156,12 +230,10 @@
                 <option value="6">6 Hours</option>
             </select>
             
-            <input type="number" id="otRate" placeholder="Rate per hour (₹)" required>
+            <input type="number" id="otRate" placeholder="Rate per hour (₹)" step="any" readonly required>
             
             <button type="submit" style="background:#0d1326; color:white; border:none; padding:12px; width:100%; border-radius:6px; cursor:pointer; font-weight:600;">Confirm OT</button>
-            
             <button type="button" style="background:none; border:none; margin-top:10px; cursor:pointer; color:#8c9ba5; font-weight:600; font-size:12px;" onclick="cancelOT()">Cancel</button>
-            
         </form>
     </div>
 </div>
@@ -180,7 +252,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, set, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyC0xLiByPlm4EGEHdxg77ylFswxgKQRnIo",
@@ -194,40 +266,116 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    
     document.getElementById('attDate').value = new Date().toISOString().split('T')[0];
     let activeId = null;
     let projectsList = [];
+    let currentWorkerName = "";
 
-    // Load available projects and workers from Firebase
-    async function initPage() {
-        try {
-            // Fetch projects list
-            const projectsSnap = await get(ref(db, "projects"));
-            projectsList = [];
-            if (projectsSnap.exists()) {
-                const data = projectsSnap.val();
-                Object.keys(data).forEach(key => {
-                    const p = data[key];
-                    const name = p.name || p.projectName || p.title || p;
-                    if (typeof name === 'string') projectsList.push(name);
-                });
+    const userBadge = document.getElementById('userBadge');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    function logoutWorker() {
+        localStorage.removeItem('activeWorkerSession');
+        window.location.href = "index.html";
+    }
+
+    logoutBtn.addEventListener('click', logoutWorker);
+
+    // Search function for filtering worker rows
+    function performSearch() {
+        const query = document.getElementById('searchWorker').value.toLowerCase().trim();
+        const rows = document.querySelectorAll('#workerRows tr');
+
+        rows.forEach(row => {
+            const name = row.getAttribute('data-name');
+            if (name) {
+                row.style.display = name.toLowerCase().includes(query) ? '' : 'none';
             }
+        });
+    }
 
-            // Listen for workers and populate table
-            onValue(ref(db, "workers"), (snapshot) => {
-                const tbody = document.getElementById("workerRows");
-                tbody.innerHTML = "";
-                
-                let projectOptionsHTML = `<option value="">Select Project</option>`;
-                projectsList.forEach(pName => {
-                    projectOptionsHTML += `<option value="${pName}">${pName}</option>`;
-                });
+    document.getElementById('btnSearch').addEventListener('click', performSearch);
+    document.getElementById('searchWorker').addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') performSearch();
+        else performSearch();
+    });
 
+    // Verify Session against Database node ('worker_ids')
+    async function verifyWorkerSession() {
+        const activeWorker = JSON.parse(localStorage.getItem('activeWorkerSession'));
+
+        if (!activeWorker || !activeWorker.workerId) {
+            logoutWorker();
+            return false;
+        }
+
+        try {
+            const workersSnap = await get(ref(db, "worker_ids"));
+            const allWorkers = workersSnap.val() || {};
+
+            let foundWorker = null;
+            Object.keys(allWorkers).forEach(key => {
+                const w = allWorkers[key];
+                if (w.workerId === activeWorker.workerId && w.password === activeWorker.password) {
+                    foundWorker = w;
+                }
+            });
+
+            if (!foundWorker) {
+                logoutWorker();
+                return false;
+            } else {
+                currentWorkerName = foundWorker.name || activeWorker.name || "Worker";
+                userBadge.innerText = `${currentWorkerName} (${foundWorker.workerId})`;
+                return true;
+            }
+        } catch (error) {
+            console.error("Session verification failed:", error);
+            logoutWorker();
+            return false;
+        }
+    }
+
+    async function loadWorkers() {
+        const date = document.getElementById('attDate').value;
+        const tbody = document.getElementById("workerRows");
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#8c9ba5;">Loading workers...</td></tr>`;
+
+        // Clear search box on reload/re-render
+        document.getElementById('searchWorker').value = '';
+
+        try {
+            // Fetch recorded attendance for selected date
+            const attSnap = await get(ref(db, `attendance/${date}`));
+            const existingAttendance = attSnap.exists() ? attSnap.val() : {};
+
+            // Fetch workers list
+            const snapshot = await get(ref(db, "workers"));
+            tbody.innerHTML = "";
+
+            let projectOptionsHTML = `<option value="">Select Project</option>`;
+            projectsList.forEach(pName => {
+                projectOptionsHTML += `<option value="${pName}">${pName}</option>`;
+            });
+
+            let visibleWorkersCount = 0;
+
+            if (snapshot.exists()) {
                 snapshot.forEach(child => {
                     const w = child.val(); 
                     const id = child.key;
+
+                    // Skip workers whose attendance is already saved for this date
+                    if (existingAttendance && existingAttendance[id]) {
+                        return;
+                    }
+
+                    visibleWorkersCount++;
+                    const workerDailyRate = parseFloat(w.amount) || 0;
+
                     tbody.innerHTML += `
-                        <tr id="row_${id}" data-id="${id}" data-name="${w.name}" data-status="Not Marked" data-othrs="0" data-otamt="0">
+                        <tr id="row_${id}" data-id="${id}" data-name="${w.name}" data-rate="${workerDailyRate}" data-status="Not Marked" data-othrs="0" data-otamt="0">
                             <td><b>${w.name}</b></td>
                             <td>
                                 <select class="project-select" id="project_${id}">
@@ -244,9 +392,40 @@
                                 <span class="ot-lbl" style="display:block;"></span>
                                 <span class="ot-amt-lbl" style="display:block;"></span>
                             </td>
+                            <td style="text-align:center">
+                                <span style="font-size:12px; font-weight:600; color:#475569;">${currentWorkerName}</span>
+                            </td>
+                            <td style="text-align:center">
+                                <button class="btn-save-row" onclick="saveSingleWorker('${id}')">Save</button>
+                            </td>
                         </tr>`;
                 });
-            });
+            }
+
+            if (visibleWorkersCount === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#8c9ba5;">All workers marked or no workers available for this date.</td></tr>`;
+            }
+        } catch (e) {
+            console.error("Error loading workers:", e);
+        }
+    }
+
+    async function initPage() {
+        const isSessionValid = await verifyWorkerSession();
+        if (!isSessionValid) return;
+
+        try {
+            const projectsSnap = await get(ref(db, "projects"));
+            projectsList = [];
+            if (projectsSnap.exists()) {
+                const data = projectsSnap.val();
+                Object.keys(data).forEach(key => {
+                    const p = data[key];
+                    const name = p.name || p.projectName || p.title || p;
+                    if (typeof name === 'string') projectsList.push(name);
+                });
+            }
+            await loadWorkers();
         } catch (e) {
             console.error("Error initializing page:", e);
         }
@@ -281,7 +460,10 @@
     window.toggleOT = (id, cb) => {
         const row = document.getElementById(`row_${id}`);
         if(cb.checked) { 
-            activeId = id; 
+            activeId = id;
+            const dailyRate = parseFloat(row.getAttribute('data-rate')) || 0;
+            const perHourRate = dailyRate > 0 ? (dailyRate / 8) : 0;
+            document.getElementById('otRate').value = perHourRate;
             document.getElementById('otModal').style.display = 'flex'; 
         } else { 
             row.setAttribute('data-othrs', 0); 
@@ -292,18 +474,17 @@
     };
 
     window.confirmOT = () => {
-        const h = document.getElementById('otHours').value;
-        const r = document.getElementById('otRate').value;
-        if(!r) return alert("Enter rate");
+        const h = parseFloat(document.getElementById('otHours').value) || 0;
+        const perHourRate = parseFloat(document.getElementById('otRate').value) || 0;
         
         const row = document.getElementById(`row_${activeId}`);
-        const totalAmount = parseFloat(h) * parseFloat(r);
+        const totalAmount = h * perHourRate;
         
         row.setAttribute('data-othrs', h); 
         row.setAttribute('data-otamt', totalAmount);
         
         row.querySelector('.ot-lbl').innerText = h + " Hour(s)";
-        row.querySelector('.ot-amt-lbl').innerText = "₹" + totalAmount.toFixed(0);
+        row.querySelector('.ot-amt-lbl').innerText = "₹" + Math.round(totalAmount);
         
         document.getElementById('otModal').style.display = 'none';
         document.getElementById('otRate').value = "";
@@ -312,62 +493,58 @@
     window.cancelOT = () => {
         const row = document.getElementById(`row_${activeId}`);
         row.querySelector('input[type="checkbox"]').checked = false;
+        row.setAttribute('data-othrs', 0); 
+        row.setAttribute('data-otamt', 0);
         row.querySelector('.ot-lbl').innerText = "";
         row.querySelector('.ot-amt-lbl').innerText = "";
         document.getElementById('otModal').style.display = 'none';
     };
 
-    window.saveToFirebase = () => {
+    window.saveSingleWorker = (id) => {
         const date = document.getElementById('attDate').value;
-        const saveBtn = document.getElementById('saveBtn');
-        const data = {};
-        const rows = document.querySelectorAll('#workerRows tr');
-        
-        if (rows.length === 0) return alert("No workers found.");
+        const row = document.getElementById(`row_${id}`);
+        if (!row) return;
 
-        let markedCount = 0;
+        const name = row.getAttribute('data-name');
+        const status = row.getAttribute('data-status');
+        const otHrs = row.getAttribute('data-othrs');
+        const otAmt = row.getAttribute('data-otamt');
+        const projectSelect = document.getElementById(`project_${id}`);
+        const selectedProject = projectSelect ? projectSelect.value : "";
 
-        rows.forEach(r => {
-            const id = r.getAttribute('data-id');
-            const status = r.getAttribute('data-status');
-            const otHrs = r.getAttribute('data-othrs');
-            const projectSelect = document.getElementById(`project_${id}`);
-            const selectedProject = projectSelect ? projectSelect.value : "";
-
-            // Save only if attendance status is marked or OT is recorded
-            if (status !== "Not Marked" || parseFloat(otHrs) > 0) {
-                markedCount++;
-                data[id] = {
-                    name: r.getAttribute('data-name'),
-                    project: selectedProject,
-                    status: status,
-                    ot_hours: otHrs,
-                    ot_amount: r.getAttribute('data-otamt')
-                };
-            }
-        });
-
-        if (markedCount === 0) {
-            alert("No worker attendance or OT was marked. Please mark at least one worker before saving.");
+        if (status === "Not Marked" && parseFloat(otHrs) === 0) {
+            alert("Please mark attendance status (P/A) or OT before saving.");
             return;
         }
 
+        const saveBtn = row.querySelector('.btn-save-row');
         saveBtn.disabled = true;
-        saveBtn.innerText = "Saving Data...";
-        saveBtn.style.opacity = "0.7";
+        saveBtn.innerText = "Saving...";
 
-        set(ref(db, "attendance/" + date), data)
+        const workerData = {
+            name: name,
+            project: selectedProject,
+            status: status,
+            ot_hours: otHrs,
+            ot_amount: otAmt,
+            updatedBy: currentWorkerName
+        };
+
+        set(ref(db, `attendance/${date}/${id}`), workerData)
             .then(() => {
-                alert(`Attendance saved successfully for ${markedCount} worker(s)!`);
-                window.location.href = 'attendance.html'; 
+                alert(`Attendance saved for ${name}!`);
+                row.remove();
+
+                const tbody = document.getElementById("workerRows");
+                if (tbody.querySelectorAll('tr').length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#8c9ba5;">All workers marked for this date.</td></tr>`;
+                }
             })
             .catch((error) => {
                 console.error("Save failed:", error);
                 alert("Error saving attendance. Please try again.");
-                
                 saveBtn.disabled = false;
-                saveBtn.innerText = "Save Attendance";
-                saveBtn.style.opacity = "1";
+                saveBtn.innerText = "Save";
             });
     };
 </script>
