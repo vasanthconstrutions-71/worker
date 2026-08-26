@@ -215,10 +215,17 @@
         const tableBody = document.getElementById("dashboardBody");
         tableBody.innerHTML = "";
         
-        let todayPresent = 0, todayAbsent = 0, workerCount = Object.keys(workersData).length;
+        let todayPresent = 0, todayAbsent = 0, workerCount = 0;
 
         Object.keys(workersData).forEach(wId => {
             const w = workersData[wId];
+
+            // Skip worker if marked as hidden in database
+            if (w.hide === true || w.hidden === true || w.isHide === true || w.status === 'hidden' || w.status === 'hide') {
+                return;
+            }
+
+            workerCount++;
             let totalDays = 0;
 
             if (attendanceData[today] && attendanceData[today][wId]) {

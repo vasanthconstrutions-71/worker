@@ -243,6 +243,7 @@
         <h4>Attendance Shift</h4>
         <button style="background:#28a745; color:white; border:none; padding:12px; width:100%; border-radius:6px; margin-top:10px; font-weight:600; cursor:pointer;" onclick="setPresent('Full Day')">Full Day</button>
         <button style="background:#f39c12; color:white; border:none; padding:12px; width:100%; border-radius:6px; margin-top:10px; font-weight:600; cursor:pointer;" onclick="setPresent('Half Day')">Half Day</button>
+        <button type="button" style="background:none; border:none; margin-top:10px; cursor:pointer; color:#8c9ba5; font-weight:600; font-size:12px;" onclick="closeShiftModal()">Cancel</button>
     </div>
 </div>
 
@@ -366,6 +367,11 @@
                     const w = child.val(); 
                     const id = child.key;
 
+                    // Skip workers marked as hidden in database
+                    if (w.hide === true || w.hidden === true || w.isHide === true || w.status === 'hidden' || w.status === 'hide') {
+                        return;
+                    }
+
                     // Skip workers whose attendance is already saved for this date
                     if (existingAttendance && existingAttendance[id]) {
                         return;
@@ -434,6 +440,7 @@
     initPage();
 
     window.openShift = (id) => { activeId = id; document.getElementById('shiftModal').style.display = 'flex'; };
+    window.closeShiftModal = () => { document.getElementById('shiftModal').style.display = 'none'; };
     window.setPresent = (type) => { setStatus(activeId, type); document.getElementById('shiftModal').style.display = 'none'; };
 
     window.setStatus = (id, s) => {
