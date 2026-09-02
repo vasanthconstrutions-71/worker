@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vasant Constructions - Attendance</title>
+    <title>Vasant Constructions - Attendance & OT Toggle</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="logo.png">
     <style>
@@ -102,16 +102,17 @@
             width: 100%; 
             overflow-x: auto;
         }
-        table { width: 100%; border-collapse: collapse; min-width: 650px; }
+        table { width: 100%; border-collapse: collapse; min-width: 750px; }
         
         th { background: #0d1326; color: #fff; padding: 12px 10px; text-align: left; font-size: 13px; font-weight: 600; }
         td { padding: 12px 10px; border-bottom: 1px solid #eef2f5; vertical-align: middle; color: #222; }
         
-        th:nth-child(1), td:nth-child(1) { width: 25%; }
-        th:nth-child(2), td:nth-child(2) { width: 25%; }
-        th:nth-child(3), td:nth-child(3) { width: 20%; text-align: center; }
+        th:nth-child(1), td:nth-child(1) { width: 20%; }
+        th:nth-child(2), td:nth-child(2) { width: 20%; }
+        th:nth-child(3), td:nth-child(3) { width: 15%; text-align: center; }
         th:nth-child(4), td:nth-child(4) { width: 15%; text-align: center; }
         th:nth-child(5), td:nth-child(5) { width: 15%; text-align: center; }
+        th:nth-child(6), td:nth-child(6) { width: 15%; text-align: center; }
 
         .project-select {
             width: 100%;
@@ -142,11 +143,22 @@
         }
         .btn-save-row:hover { background: #28a745; }
 
+        .switch { position: relative; display: inline-block; width: 36px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top:0; left:0; right:0; bottom:0; background:#ccc; transition:.4s; border-radius:20px; }
+        .slider:before { position: absolute; content:""; height:14px; width:14px; left:2px; bottom:2px; background:white; transition:.4s; border-radius:50%; }
+        input:checked + .slider { background:#f5a623; }
+        input:checked + .slider:before { transform: translateX(18px); }
+
         .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index: 1000; padding: 20px; }
         .modal-content { background:#fff; padding:20px; border-radius:12px; width: 100%; max-width: 340px; text-align:center; box-shadow: 0 5px 15px rgba(0,0,0,0.15); }
         .modal-content h4 { color: #0d1326; margin-bottom: 12px; font-size: 16px; }
+        select, input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 6px; border: 1px solid #dce2e6; font-size: 13px; outline: none; }
+        input[readonly] { background-color: #e2e8f0; cursor: not-allowed; color: #475569; }
         
-        .lbl { font-size: 10px; margin-top: 3px; font-weight: 600; }
+        .lbl, .ot-lbl, .ot-amt-lbl { font-size: 10px; margin-top: 3px; font-weight: 600; }
+        .ot-lbl { color: #0d1326 !important; }
+        .ot-amt-lbl { color: #28a745; }
         b { font-size: 13px; word-break: break-word; color: #111; }
         .active-half { 
             background: #f39c12 !important; 
@@ -194,12 +206,35 @@
                     <th>Worker</th>
                     <th>Project / Workplace</th>
                     <th style="text-align:center">Status</th>
+                    <th style="text-align:center">OT</th>
                     <th style="text-align:center">Updater</th>
                     <th style="text-align:center">Action</th>
                 </tr>
             </thead>
             <tbody id="workerRows"></tbody>
         </table>
+    </div>
+</div>
+
+<div class="modal" id="otModal">
+    <div class="modal-content">
+        <h4>OT Calculation</h4>
+        
+        <form onsubmit="event.preventDefault(); confirmOT();">
+            <select id="otHours">
+                <option value="1">1 Hour</option>
+                <option value="2">2 Hours</option>
+                <option value="3">3 Hours</option>
+                <option value="4">4 Hours</option>
+                <option value="5">5 Hours</option>
+                <option value="6">6 Hours</option>
+            </select>
+            
+            <input type="number" id="otRate" placeholder="Rate per hour (₹)" step="any" readonly required>
+            
+            <button type="submit" style="background:#0d1326; color:white; border:none; padding:12px; width:100%; border-radius:6px; cursor:pointer; font-weight:600;">Confirm OT</button>
+            <button type="button" style="background:none; border:none; margin-top:10px; cursor:pointer; color:#8c9ba5; font-weight:600; font-size:12px;" onclick="cancelOT()">Cancel</button>
+        </form>
     </div>
 </div>
 
@@ -306,7 +341,7 @@
     async function loadWorkers() {
         const date = document.getElementById('attDate').value;
         const tbody = document.getElementById("workerRows");
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#8c9ba5;">Loading workers...</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#8c9ba5;">Loading workers...</td></tr>`;
 
         // Clear search box on reload/re-render
         document.getElementById('searchWorker').value = '';
@@ -346,7 +381,7 @@
                     const workerDailyRate = parseFloat(w.amount) || 0;
 
                     tbody.innerHTML += `
-                        <tr id="row_${id}" data-id="${id}" data-name="${w.name}" data-rate="${workerDailyRate}" data-status="Not Marked">
+                        <tr id="row_${id}" data-id="${id}" data-name="${w.name}" data-rate="${workerDailyRate}" data-status="Not Marked" data-othrs="0" data-otamt="0">
                             <td><b>${w.name}</b></td>
                             <td>
                                 <select class="project-select" id="project_${id}">
@@ -359,6 +394,11 @@
                                 <span class="lbl" style="display:block;"></span>
                             </td>
                             <td style="text-align:center">
+                                <label class="switch"><input type="checkbox" onchange="toggleOT('${id}', this)"><span class="slider"></span></label>
+                                <span class="ot-lbl" style="display:block;"></span>
+                                <span class="ot-amt-lbl" style="display:block;"></span>
+                            </td>
+                            <td style="text-align:center">
                                 <span style="font-size:12px; font-weight:600; color:#475569;">${currentWorkerName}</span>
                             </td>
                             <td style="text-align:center">
@@ -369,7 +409,7 @@
             }
 
             if (visibleWorkersCount === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#8c9ba5;">All workers marked or no workers available for this date.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#8c9ba5;">All workers marked or no workers available for this date.</td></tr>`;
             }
         } catch (e) {
             console.error("Error loading workers:", e);
@@ -424,56 +464,97 @@
         row.querySelector('.lbl').innerText = s;
     };
 
-    window.saveSingleWorker = (id) => {
-        const date = document.getElementById('attDate').value;
+    window.toggleOT = (id, cb) => {
         const row = document.getElementById(`row_${id}`);
-        if (!row) return;
-
-        const name = row.getAttribute('data-name');
-        const status = row.getAttribute('data-status');
-        const projectSelect = document.getElementById(`project_${id}`);
-        const selectedProject = projectSelect ? projectSelect.value : "";
-
-        // Strictly blocks saving if attendance status is not selected
-        if (status === "Not Marked") {
-            alert("Please select attendance status (Full Day, Half Day, or Absent) before saving.");
-            return;
+        if(cb.checked) { 
+            activeId = id;
+            const dailyRate = parseFloat(row.getAttribute('data-rate')) || 0;
+            const perHourRate = dailyRate > 0 ? (dailyRate / 8) : 0;
+            document.getElementById('otRate').value = perHourRate;
+            document.getElementById('otModal').style.display = 'flex'; 
+        } else { 
+            row.setAttribute('data-othrs', 0); 
+            row.setAttribute('data-otamt', 0);
+            row.querySelector('.ot-lbl').innerText = "";
+            row.querySelector('.ot-amt-lbl').innerText = "";
         }
-
-        // Strictly blocks saving if project/workplace is not selected
-        if (!selectedProject) {
-            alert("Please select a project / workplace before saving.");
-            return;
-        }
-
-        const saveBtn = row.querySelector('.btn-save-row');
-        saveBtn.disabled = true;
-        saveBtn.innerText = "Saving...";
-
-        const workerData = {
-            name: name,
-            project: selectedProject,
-            status: status,
-            updatedBy: currentWorkerName
-        };
-
-        set(ref(db, `attendance/${date}/${id}`), workerData)
-            .then(() => {
-                alert(`Attendance saved for ${name}!`);
-                row.remove();
-
-                const tbody = document.getElementById("workerRows");
-                if (tbody.querySelectorAll('tr').length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#8c9ba5;">All workers marked for this date.</td></tr>`;
-                }
-            })
-            .catch((error) => {
-                console.error("Save failed:", error);
-                alert("Error saving attendance. Please try again.");
-                saveBtn.disabled = false;
-                saveBtn.innerText = "Save";
-            });
     };
+
+    window.confirmOT = () => {
+        const h = parseFloat(document.getElementById('otHours').value) || 0;
+        const perHourRate = parseFloat(document.getElementById('otRate').value) || 0;
+        
+        const row = document.getElementById(`row_${activeId}`);
+        const totalAmount = h * perHourRate;
+        
+        row.setAttribute('data-othrs', h); 
+        row.setAttribute('data-otamt', totalAmount);
+        
+        row.querySelector('.ot-lbl').innerText = h + " Hour(s)";
+        row.querySelector('.ot-amt-lbl').innerText = "₹" + Math.round(totalAmount);
+        
+        document.getElementById('otModal').style.display = 'none';
+        document.getElementById('otRate').value = "";
+    };
+
+    window.cancelOT = () => {
+        const row = document.getElementById(`row_${activeId}`);
+        row.querySelector('input[type="checkbox"]').checked = false;
+        row.setAttribute('data-othrs', 0); 
+        row.setAttribute('data-otamt', 0);
+        row.querySelector('.ot-lbl').innerText = "";
+        row.querySelector('.ot-amt-lbl').innerText = "";
+        document.getElementById('otModal').style.display = 'none';
+    };
+
+window.saveSingleWorker = (id) => {
+    const date = document.getElementById('attDate').value;
+    const row = document.getElementById(`row_${id}`);
+    if (!row) return;
+
+    const name = row.getAttribute('data-name');
+    const status = row.getAttribute('data-status');
+    const otHrs = row.getAttribute('data-othrs');
+    const otAmt = row.getAttribute('data-otamt');
+    const projectSelect = document.getElementById(`project_${id}`);
+    const selectedProject = projectSelect ? projectSelect.value : "";
+
+    // Strictly blocks saving if attendance (Full Day, Half Day, or Absent) is not selected
+    if (status === "Not Marked") {
+        alert("Please select attendance status (Full Day, Half Day, or Absent) before saving.");
+        return;
+    }
+
+    const saveBtn = row.querySelector('.btn-save-row');
+    saveBtn.disabled = true;
+    saveBtn.innerText = "Saving...";
+
+    const workerData = {
+        name: name,
+        project: selectedProject,
+        status: status,
+        ot_hours: otHrs,
+        ot_amount: otAmt,
+        updatedBy: currentWorkerName
+    };
+
+    set(ref(db, `attendance/${date}/${id}`), workerData)
+        .then(() => {
+            alert(`Attendance saved for ${name}!`);
+            row.remove();
+
+            const tbody = document.getElementById("workerRows");
+            if (tbody.querySelectorAll('tr').length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:20px; color:#8c9ba5;">All workers marked for this date.</td></tr>`;
+            }
+        })
+        .catch((error) => {
+            console.error("Save failed:", error);
+            alert("Error saving attendance. Please try again.");
+            saveBtn.disabled = false;
+            saveBtn.innerText = "Save";
+        });
+};
 </script>
 </body>
 </html>
