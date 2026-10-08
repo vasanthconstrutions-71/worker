@@ -431,6 +431,7 @@
 
         const name = row.getAttribute('data-name');
         const status = row.getAttribute('data-status');
+        const dailyRate = parseFloat(row.getAttribute('data-rate')) || 0;
         const projectSelect = document.getElementById(`project_${id}`);
         const selectedProject = projectSelect ? projectSelect.value : "";
 
@@ -454,7 +455,8 @@
             name: name,
             project: selectedProject,
             status: status,
-            updatedBy: currentWorkerName
+            updatedBy: currentWorkerName,
+            rate: dailyRate
         };
 
         set(ref(db, `attendance/${date}/${id}`), workerData)
